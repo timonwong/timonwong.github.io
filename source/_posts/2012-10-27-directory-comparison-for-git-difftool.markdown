@@ -10,7 +10,7 @@ For a long time, I didn't know a way to do directory comparison using git diffto
 [extdiff extension](http://mercurial.selenic.com/wiki/ExtdiffExtension) from
 Mercurial did perform much more superior than Git.
 
-Though it may be a bit out of date, I just found that after v1.7.11, Git now supports
+Though it may be a bit out of date, I just found that after `v1.7.11`, Git now supports
 directory comparison through `--dir-diff` option, fantastic!
 
 So here is a list of steps for me to make Beyond Compare 3 and Git
