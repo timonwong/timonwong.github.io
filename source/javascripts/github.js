@@ -10,10 +10,10 @@ var github = (function(){
   return {
     showRepos: function(options){
       $.ajax({
-          url: "https://api.github.com/users/"+options.user+"/repos?callback=?"
-        , type: 'jsonp'
-        , error: function (err) { $(options.target + ' li.loading').addClass('error').text("Error loading feed"); }
-        , success: function(data) {
+          url: "https://api.github.com/users/"+options.user+"/repos?callback=?",
+          type: 'jsonp',
+          error: function (err) { $(options.target + ' li.loading').addClass('error').text("Error loading feed"); },
+          success: function(data) {
           var repos = [];
           if (!data || !data.data) { return; }
           for (var i = 0; i < data.data.length; i++) {
