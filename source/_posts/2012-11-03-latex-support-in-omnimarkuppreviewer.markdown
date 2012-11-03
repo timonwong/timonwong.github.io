@@ -29,7 +29,7 @@ background, so hold on.
 
 `OmniMarkupPreviewer.sublime-settings`:
 
-```javascript
+``` javascript
 {
     "mathjax_enabled": true
 }
@@ -43,19 +43,19 @@ you have to download and extract MathJax library manually:
 
 Download the MathJax archive:
 
-```bash
+``` bash
 wget -c https://github.com/downloads/timonwong/OmniMarkupPreviewer/mathjax.zip
 ```
 
 Extract to `${packages}/OmniMarkupPreviewer/public/`:
 
-```bash
+``` bash
 unzip mathjax.zip -d ~/.config/sublime-text-2/Packages/OmniMarkupPreviewer/public
 ```
 
 Create an empty file named `.MATHJAX.DOWNLOADED` in the plugin folder:
 
-```bash
+``` bash
 touch ~/.config/sublime-text-2/Packages/OmniMarkupPreviewer/.MATHJAX.DOWNLOADED
 ```
 
@@ -68,7 +68,7 @@ the changes.
 
 Enclose your euqation in `$` delimiters to include an inline $\LaTeX$ equation, for example:
 
-```plain
+``` plain
 This expression $\sqrt{3x-1}+(1+x)^2$ is an example of a $\LaTeX$ inline equation.
 ```
 
@@ -80,7 +80,7 @@ supported.
 To include a $\LaTeX$ display equation you have to enclose the equation in `$$`
 delimiters, for example:
 
-```plain
+``` plain
 The Lorenz Equations:
 
 $$
@@ -100,7 +100,7 @@ The alternative syntax of native MathJax delimiter for display math (`\[` and
 You can alsow insert MathML euqations, just wrap your equation inside the standard
 `<math>` tag:
 
-```xml
+``` xml
 <math xmlns="http://www.w3.org/1998/Math/MathML" display="block">
   <mi>P</mi>
   <mo stretchy="false">(</mo>

@@ -11,11 +11,12 @@ version of [Sublime Text 2](http://www.sublimetext.com/2), you will get ``Import
 for example:
 
 ``` python
-import unicode
+import unicodedata
 ```
 
 Will result in:
-```
+
+``` plain
 Import Error: No module named unicode
 ```
 
