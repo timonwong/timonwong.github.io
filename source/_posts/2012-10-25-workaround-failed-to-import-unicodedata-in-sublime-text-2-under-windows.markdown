@@ -17,7 +17,7 @@ import unicodedata
 Will result in:
 
 ``` plain
-Import Error: No module named unicode
+Import Error: No module named unicodedata
 ```
 
 However, since standard pyd modules are not missing, reside correctly in the same
