@@ -9,14 +9,6 @@ tags: RabbitMQ
 
 对于服务器来说，并发连接数一直是一个需要考量的问题，因此在这里做一个简单的测试。
 
-这里的测试分几步进行：
-
-1. 耗尽 rabbitmq 的 socket descriptors
-2. TBD
-3. TBD
-
-<!-- more -->
-
 ## 测试
 
 在测试前，需要准备一个客户端环境，本文的环境是:
@@ -29,7 +21,7 @@ tags: RabbitMQ
 
 **NOTE:** 下文中的 IP 地址 `10.10.0.70` 为 RabbitMQ 服务器的 IP 地址
 
-### 测试1: 耗尽 rabbitmq 的 socket descriptors
+### 测试: 耗尽 rabbitmq 的 socket descriptors
 
 首先, 编写一个脚本:
 
@@ -63,12 +55,7 @@ if __name__ == '__main__':
 在**客户端**执行`exhaust_socket_descriptors.py`, 会看到如下输出:
 
 ```
-...
-...
-...
-2014-05-13 10:45:17,464 - exhaust_socket_descriptors.py - INFO - [824] connections
-2014-05-13 10:45:17,464 - exhaust_socket_descriptors.py - INFO - Try to establish a new rabbit connection...
-2014-05-13 10:45:17,477 - exhaust_socket_descriptors.py - INFO - [825] connections
+...前略...
 2014-05-13 10:45:17,477 - exhaust_socket_descriptors.py - INFO - Try to establish a new rabbit connection...
 2014-05-13 10:45:17,489 - exhaust_socket_descriptors.py - INFO - [826] connections
 2014-05-13 10:45:17,489 - exhaust_socket_descriptors.py - INFO - Try to establish a new rabbit connection...
@@ -107,18 +94,26 @@ if __name__ == '__main__':
 ESTABLISHED
 ```
 
-**全部都是ESTABLISHED状态**，因此服务器仅仅是阻塞了新连接，而不是拒绝新连接。
+**全部都是ESTABLISHED状态**，因此服务器仅仅是阻塞了新连接，而不是拒绝新连接。这样，就产生了几个问题：
+
+1. 如果是使用 [HAProxy] 等工具搭建的集群，由于**服务器依然会接受新连接**，因此 [HAProxy] 不会认为节点已Down，**最终会导致整个集群卡住**；
+2. 最终即使是 Consumer 也会全部卡住，只有在 `sockets_used < sockets_limit` 时，才会恢复。
 
 
+[HAProxy]: http://clusterlabs.org/
 
-
-## 结论
-
-## Workaround: 增加File Descriptors个数
+## Workaround: 增加File/Socket Descriptors个数
 
 通过官方(包括EPEL)的 `deb`, `rpm` 包安装的启动脚本，都会在`rabbitmq-server`
-启动前 `source` 一次 `/etc/default/rabbitmq-server` 文件，因此我们可以在该文件中增加最大允许的 File Descriptors 个数。
+启动前 `source` 一次 `/etc/default/rabbitmq-server` 文件，因此我们可以在该文件中增加最大允许的
+File/Socket Descriptors 个数。
 
 ``` bash
 echo 'ulimit -n 102400' > /etc/default/rabbitmq-server
+```
+
+最后，重启 RabbitMQ 服务器以生效该设置：
+
+``` bash
+service rabbitmq-server restart
 ```
