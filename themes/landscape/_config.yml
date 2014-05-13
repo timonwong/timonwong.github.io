@@ -1,7 +1,7 @@
 # Header
 menu:
   Home: /
-  Archives: /archives
+  Archives: /blog/archives
   GitHub: https://github.com/timonwong
   Twitter: https://twitter.com/timonwong
 rss: /atom.xml
