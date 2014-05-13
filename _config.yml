@@ -105,5 +105,12 @@ deploy:
   repo: git@github.com:timonwong/timonwong.github.com.git
   branch: master
 
+# 3rd Party Settings
 plugins:
 - hexo-math
+- hexo-generator-feed
+
+feed:
+    type: atom
+    path: atom.xml
+    limit: 20

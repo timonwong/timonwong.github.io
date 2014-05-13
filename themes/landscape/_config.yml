@@ -2,6 +2,8 @@
 menu:
   Home: /
   Archives: /archives
+  GitHub: https://github.com/timonwong
+  Twitter: https://twitter.com/timonwong
 rss: /atom.xml
 
 # Content
@@ -18,9 +20,9 @@ widgets:
 - recent_posts
 
 # Miscellaneous
-google_analytics:
+google_analytics: UA-35644871-2
 favicon: /favicon.png
-twitter:
+twitter: TimonWong
 google_plus:
 fb_admins:
 fb_app_id:
