@@ -2,7 +2,6 @@
 layout: post
 title: "$\\LaTeX$ Support in OmniMarkupPreviewer"
 date: 2012-11-03 12:41
-comments: true
 categories: [Sublime Text 2, OmniMarkupPreviewer]
 ---
 

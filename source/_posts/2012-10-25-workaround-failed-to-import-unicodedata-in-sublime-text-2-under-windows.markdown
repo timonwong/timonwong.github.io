@@ -2,7 +2,6 @@
 layout: post
 title: "Workaround: Failed to import unicodedata in Sublime Text 2 under Windows"
 date: 2012-10-25 13:36
-comments: true
 categories: [Sublime Text 2]
 ---
 

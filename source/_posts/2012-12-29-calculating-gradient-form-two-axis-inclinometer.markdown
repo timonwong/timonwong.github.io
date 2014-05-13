@@ -2,8 +2,7 @@
 layout: post
 title: "双轴倾角传感器计算坡度"
 date: 2012-12-29 19:30
-comments: true
-categories: Sensor
+tags: Sensor
 ---
 
 令 $x$ 轴, $y$ 轴上的转角分别为 $\alpha, \beta$, 平面坡度为 $\theta$, 则:

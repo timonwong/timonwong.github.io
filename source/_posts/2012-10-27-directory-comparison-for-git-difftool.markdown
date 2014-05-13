@@ -2,7 +2,6 @@
 layout: post
 title: "Directory comparison for git difftool, with Beyond Compare 3"
 date: 2012-10-27 23:02
-comments: true
 categories: [Git]
 ---
 
