@@ -4,6 +4,7 @@
   "private": true,
   "dependencies": {
     "hexo-math": "~1.0.3",
-    "hexo-generator-feed": "~0.1.1"
+    "hexo-generator-feed": "~0.1.1",
+    "hexo-livereload": "~0.1.0"
   }
 }
