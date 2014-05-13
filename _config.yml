@@ -102,5 +102,8 @@ stylus:
 ## Docs: http://hexo.io/docs/deployment.html
 deploy:
   type: github
-  repo: https://github.com/timonwong/timonwong.github.com.git
+  repo: git@github.com:timonwong/timonwong.github.com.git
   branch: master
+
+plugins:
+- hexo-math
