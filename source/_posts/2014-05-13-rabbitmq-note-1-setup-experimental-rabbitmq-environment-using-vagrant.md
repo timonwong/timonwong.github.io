@@ -70,8 +70,26 @@ wget http://dl.fedoraproject.org/pub/epel/6/x86_64/epel-release-6-8.noarch.rpm
 wget http://rpms.famillecollet.com/enterprise/remi-release-6.rpm
 rpm -Uvh remi-release-6*.rpm epel-release-6*.rpm
 
-# Install rabbitmq-server
+# Install and start rabbitmq-server
 yum -y install rabbitmq-server
+
+## Automatically start
+chkconfig rabbitmq-server on
+
+## Create a sample config and enable guest user remote access
+echo > /etc/rabbitmq/rabbitmq.config <<EOF
+[
+  {rabbit, [
+    {loopback_users, []}
+  ]}
+].
+EOF
+
+## Enable magement plugin
+/usr/lib/rabbitmq/bin/rabbitmq-plugins enable rabbitmq_management
+
+## Start rabbitmq-server
+service rabbitmq-server start
 
 # Disable iptables
 service iptables stop
