@@ -23,7 +23,7 @@ vagrant box add --name centos63 'https://s3.amazonaws.com/itmat-public/centos-6.
 
 `Vagrantfile` 文件内容如下:
 
-```
+``` ruby Vagrantfile
 # -*- mode: ruby -*-
 # vi: set ft=ruby :
 
