@@ -2,7 +2,8 @@
 layout: post
 title: "Workaround: Failed to import unicodedata in Sublime Text 2 under Windows"
 date: 2012-10-25 13:36
-categories: [Sublime Text 2]
+categories: IT
+tags: [Sublime Text 2, Python]
 ---
 
 It's weird, while importing some .pyd modules, like pyexpat, unicodedata in Windows

@@ -2,7 +2,8 @@
 layout: post
 title: "Directory comparison for git difftool, with Beyond Compare 3"
 date: 2012-10-27 23:02
-categories: [Git]
+categories: IT
+tags: [Git, Beyond Compare 3]
 ---
 
 For a long time, I didn't know a way to do directory comparison using git difftool command,

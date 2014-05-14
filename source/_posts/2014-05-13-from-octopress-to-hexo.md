@@ -2,7 +2,8 @@
 layout: post
 title: 'From Octopress To Hexo'
 date: 2014-05-13 14:18:50
-tags:
+categories: IT
+tags: [Hexo, GitHub]
 ---
 
 It's been a long time, [Octopress] is slow and painful to setup, after the death of

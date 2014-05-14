@@ -1,8 +1,8 @@
 ---
 title: 'RabbitMQ笔记（一）: 通过Vagrant建立一个RabbitMQ服务器实验环境'
 date: 2014-05-13 14:46:31
-categories: RabbitMQ
-tags: RabbitMQ
+categories: IT
+tags: [RabbitMQ, Vagrant]
 ---
 
 ## 安装Vagrant

@@ -1,7 +1,7 @@
 ---
 title: "解决GitHub Pages的302转向问题"
 date: 2014-05-14 10:34:21
-categories:
+categories: IT
 tags: [GitHub, DNS]
 ---
 
