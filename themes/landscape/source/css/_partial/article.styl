@@ -302,6 +302,14 @@ $article-share-link
     background: color-google
     text-shadow: 0 1px darken(color-google, 20%)
 
+.article-share-weibo
+  @extend $article-share-link
+  &:before
+    content: "\f18a"
+  &:hover
+    background: color-weibo
+    text-shadow: 0 1px darken(color-weibo, 20%)
+
 .article-gallery
   background: #000
   position: relative
