@@ -15,9 +15,9 @@ tags: RabbitMQ
 
 - CentOS 6.3
 - Python 2.7.6
-  - kombu
+  - [Kombu]
 
-[kombu]: http://kombu.readthedocs.org/
+[Kombu]: http://kombu.readthedocs.org/
 
 **NOTE:** 下文中的 IP 地址 `10.10.0.70` 为 RabbitMQ 服务器的 IP 地址
 
