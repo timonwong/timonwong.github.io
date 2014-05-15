@@ -96,7 +96,7 @@ markdown:
 
 # Stylus
 stylus:
-  compress: true
+  compress: false
 
 # Deployment
 ## Docs: http://hexo.io/docs/deployment.html

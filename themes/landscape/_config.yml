@@ -11,6 +11,7 @@ fancybox: true
 # Sidebar
 sidebar: right
 widgets:
+- about
 - category
 - tag
 - tagcloud
@@ -27,3 +28,7 @@ fb_app_id:
 
 # Customizations
 github: timonwong
+user_title: Timon Wong (timonwong)
+gravatar: timon86.wang@gmail.com
+email: timon86.wang@gmail.com
+weibo: uglifycode

@@ -1,0 +1,21 @@
+<div class="widget-wrap">
+  <h3 class="widget-title">About</h3>
+  <div class="widget">
+    <img src="<%- gravatar(theme.gravatar, 200) %>" style="margin: auto; width: 100%"/>
+    <h4 style="text-align: center"><strong><%- theme.user_title %></strong></h4>
+    <div class="about-links-holder">
+    <% if (theme.github) { %>
+      <a id="about-github-link" class="about-icon" href="https://github.com/<%- theme.github %>" title="GitHub"></a>
+    <% } %>
+    <% if (theme.twitter) { %>
+      <a id="about-twitter-link" class="about-icon" href="https://twitter.com/<%- theme.twitter %>" title="Twitter"></a>
+    <% } %>
+    <% if (theme.weibo) { %>
+      <a id="about-weibo-link" class="about-icon" href="http://weibo.com/<%- theme.weibo %>" title="Weibo"></a>
+    <% } %>
+    <% if (theme.email) { %>
+      <a id="about-email-link" class="about-icon" href="mailto:<%- theme.email %>" title="Mail"></a>
+    <% } %>
+    </div>
+  </div>
+</div>
