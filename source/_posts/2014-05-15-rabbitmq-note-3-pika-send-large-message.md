@@ -73,7 +73,7 @@ Send data to the socket. The socket must be connected to a remote socket. The op
 ## 解决
 
 1. 自行打补丁；
-2. 使用git上的Pika: `pip install git+https://github.com/pika/pika.git`；
+2. 使用 `git` 上的 Pika: `pip install git+https://github.com/pika/pika.git`；
 3. 不用 [Pika], 换其它的，比如 [Kombu]。
 
 
