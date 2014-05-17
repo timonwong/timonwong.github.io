@@ -94,13 +94,19 @@ if __name__ == '__main__':
 ESTABLISHED
 ```
 
-**全部都是ESTABLISHED状态**，因此服务器仅仅是阻塞了新连接，而不是拒绝新连接。这样，就产生了几个问题：
+**全部都是ESTABLISHED状态**，因此服务器仅仅是阻塞了新连接，而不是拒绝新连接。这样，就产生了一个问题：
 
-1. 如果是使用 [HAProxy] 等工具搭建的集群，由于**服务器依然会接受新连接**，因此 [HAProxy] 不会认为节点已Down，**最终会导致整个集群卡住**；
-2. 最终即使是 Consumer 也会全部卡住，只有在 `sockets_used < sockets_limit` 时，才会恢复。
-
+如果是使用 [HAProxy] 等工具搭建的集群，由于**服务器依然会接受新连接**，因此 [HAProxy] 不会认为节点已Down，**最终会导致整个集群卡住**；
 
 [HAProxy]: http://clusterlabs.org/
+
+### Bug ###
+
+当 RabbitMQ 的 `sockets_used` 达到 `sockets_limits` 时候（连接数耗尽时），最终即使是 Consumer
+也会全部阻塞，只有在 `sockets_used < sockets_limit` 时（释放部分连接后），才会恢复。
+
+参见以下连接获取更多信息: http://markmail.org/message/r4yhvqc7vgfljpao
+
 
 ## Workaround: 增加File/Socket Descriptors个数
 
@@ -117,3 +123,9 @@ echo 'ulimit -n 102400' > /etc/default/rabbitmq-server
 ``` bash
 service rabbitmq-server restart
 ```
+
+## Updated
+
+### May 17, 2014
+
+- 更新 Bug 说明 (RabbitMQ `bug26180`)
