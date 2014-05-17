@@ -23,7 +23,7 @@ gem sources -a http://ruby.taobao.org/
 gem sources --remove http://rubygems.org/
 ```
 
-### 安装 FPM
+### 通过 Gem 安装 FPM
 
 在 `Ruby` 安装完成后，就可以使用 `gem` 安装 [FPM] 了：
 
