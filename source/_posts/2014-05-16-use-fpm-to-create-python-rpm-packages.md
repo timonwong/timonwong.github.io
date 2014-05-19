@@ -98,11 +98,11 @@ fpm -s dir -t -f rpm -n python27 -v '2.7.6' \
 
 ## Bonus Time
 
-TO BE DONE
-
-将会包含以下内容：
+包含以下内容：
 
 - 自动下载、编译、打包 Python RPM 包的 Makefile；
-- 自动下载、编译、打包 virtualenv、pip、supervisor 等依赖于 Python 工具的 RPM 包。
+- 自动下载、编译、打包 virtualenv、pip、supervisor 等 Python 库和工具的 RPM 包。
+
+GitHub 项目地址：[python27-rpm](https://github.com/timonwong/python27-rpm)
 
 [FPM]: https://github.com/jordansissel/fpm
