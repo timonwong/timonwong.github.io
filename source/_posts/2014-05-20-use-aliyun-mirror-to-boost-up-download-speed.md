@@ -1,7 +1,7 @@
 ---
 title: '使用阿里云镜像服务器'
 date: 2014-05-20 11:40:29
-categories:
+categories: IT
 tags:
 ---
 
