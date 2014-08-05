@@ -2,6 +2,7 @@
 node_modules
 db.json
 .qiniu.json
+.qiniu/
 
 .deploy/
 public/
