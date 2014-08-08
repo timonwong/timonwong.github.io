@@ -1,0 +1,8 @@
+digraph {
+	rankdir=BT;
+	node [fontname=Arial,shape=ellipse];
+	Itab -> InterfaceType;
+	Iface -> Itab;
+	Itab -> Itab;
+	Eface;
+}
