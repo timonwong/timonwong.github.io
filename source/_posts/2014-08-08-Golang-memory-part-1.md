@@ -42,7 +42,7 @@ func main() {
 // ei == nil: true
 ```
 
-这里 `ai != nil`，对于没有用过 Go 的人来说比较费解，对我来说，这个算得上一门语言设计有歧义的地方（Golang FAQ 有对于此问题的描述，可以参考一下：http://golang.org/doc/faq#nil_error）。
+这里 `ai != nil`，对于没有用过 Go 的人来说比较费解，对我来说，这个算得上一门语言设计有歧义的地方（Golang FAQ 有对于此问题的描述，可以参考一下：[http://golang.org/doc/faq#nil_error](http://golang.org/doc/faq#nil_error)）。
 
 简单的说就是 nil 代表 "zero value"（空值），**对于不同类型，它具体所代表的值不同**。比如上面的 `a` 为“`*A` 类型的空值”，而 `ai` 为“`interface{}` 类型的空值”。造成理解失误的最大问题在于，`struct pointer` 到 `interface` 有隐式转换（`var ai interface{] = a`，这里有个隐式转换），至于为什么对于 Go 这种在其它转换方面要求严格，而对于 `interface` 要除外呢，for convenience 吧，呵呵……
 
@@ -153,3 +153,5 @@ struct Eface
 
 
 先到这里，下一篇将会举例子说明给一个 `interface{}` 类型的变量赋值后，其具体的内存结构是怎么样的。
+
+打了几个小时，真费时间，争取这个系列不坑 (逃

@@ -23,7 +23,7 @@ build: graph
 	hexo clean
 	hexo generate
 
-publish:
+publish: build
 	hexo deploy
 
 
