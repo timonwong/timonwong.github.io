@@ -104,12 +104,6 @@ deploy:
   repo: git@github.com:timonwong/timonwong.github.com.git
   branch: master
 
-# 3rd Party Settings
-plugins:
-- hexo-math
-- hexo-generator-feed
-- hexo-generator-sitemap
-
 sitemap:
   path: sitemap.xml
 
