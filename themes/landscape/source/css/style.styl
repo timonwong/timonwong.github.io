@@ -22,32 +22,6 @@ input, button
        url(font-icon-path + ".ttf?v=#" + font-icon-version) format("truetype"),
        url(font-icon-path + ".svg#fontawesomeregular?v=#" + font-icon-version) format("svg")
 
-@font-face
-  font-family: "Source Code Pro"
-  font-style: normal
-  font-weight: 400
-  src: local("Source Code Pro"),
-       local("SourceCodePro-Regular"),
-       url(font-mono-path + ".eot?v=#" + font-mono-version)
-  src: url(font-mono-path + ".eot?#iefix&v=#" + font-mono-version) format("embedded-opentype"),
-       url(font-mono-path + ".woff?v=#" + font-mono-version) format("woff"),
-       url(font-mono-path + ".ttf?v=#" + font-mono-version) format("truetype"),
-       url(font-mono-path + ".svg#source_code_proregular?v=#" + font-mono-version) format("svg")
-
-@font-face
-  font-family: "Open Sans"
-  font-style: normal
-  font-weight: 400
-  src: local("Open Sans"), local("OpenSans"),
-       url(font-opensans-path + ".woff") format("woff")
-
-@font-face
-  font-family: "PT Serif"
-  font-style: normal
-  font-weight: 400
-  src: local("PT Serif"), local("PTSerif-Regular"),
-       url(font-ptserif-path + ".woff") format("woff")
-
 html, body, #container
   height: 100%
 
@@ -98,8 +72,9 @@ if sidebar and sidebar isnt bottom
       column(main-column)
 
 if sidebar is left
-  #main
-    float: right
+  @media mq-normal
+    #main
+      float: right
 
 @import "_extend"
 @import "_partial/header"

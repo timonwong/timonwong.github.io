@@ -86,7 +86,7 @@ $$
 $$
 ```
 
-{% rawblock %}
+{% raw %}
 $$
 \begin{aligned}
 \dot{x} & = \sigma(y-x) \\
@@ -94,7 +94,7 @@ $$
 \dot{z} & = -\beta z + xy
 \end{aligned}
 $$
-{% endrawblock %}
+{% endraw %}
 
 The alternative syntax of native MathJax delimiter for display math (`\[` and `\]`) is also provided.
 

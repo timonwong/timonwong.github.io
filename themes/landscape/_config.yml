@@ -18,6 +18,16 @@ widgets:
 - archive
 - recent_posts
 
+# display widgets at the bottom of index pages (pagination == 2)
+index_widgets:
+# - category
+# - tagcloud
+# - archive
+
+# widget behavior
+archive_type: 'monthly'
+show_count: false
+
 # Miscellaneous
 google_analytics: UA-35644871-2
 favicon: /favicon.png

@@ -1,6 +1,6 @@
 # Hexo Configuration
-## Docs: http://hexo.io/docs/configuration.html
-## Source: https://github.com/tommy351/hexo/
+## Docs: https://hexo.io/docs/configuration.html
+## Source: https://github.com/hexojs/hexo/
 
 # Site
 title: Timon Wong's Blog
@@ -9,20 +9,23 @@ description:
 author: Timon Wong
 email: timon86.wang@gmail.com
 language:
+timezone:
 
 # URL
 ## If your site is put in a subdirectory, set url as 'http://yoursite.com/child' and root as '/child/'
 url: http://theo.im
 root: /
 permalink: blog/:year/:month/:day/:title/
-tag_dir: tags
-archive_dir: blog/archives
-category_dir: blog/categories
-code_dir: downloads/code
 
 # Directory
 source_dir: source
 public_dir: public
+tag_dir: tags
+archive_dir: blog/archives
+category_dir: blog/categories
+code_dir: downloads/code
+i18n_dir: :lang
+skip_render:
 
 # Writing
 new_post_name: :year-:month-:day-:title.md # File name of new posts
@@ -66,7 +69,7 @@ logger_format:
 ## You can customize the date format as defined in
 ## http://momentjs.com/docs/#/displaying/format/
 date_format: MMM D YYYY
-time_format: H:mm:ss
+time_format: HH:mm:ss
 
 # Pagination
 ## Set per_page to 0 to disable pagination
@@ -77,8 +80,9 @@ pagination_dir: blog/page
 disqus_shortname: theoim
 
 # Extensions
-## Plugins: https://github.com/tommy351/hexo/wiki/Plugins
-## Themes: https://github.com/tommy351/hexo/wiki/Themes
+## Plugins: https://hexo.io/plugins/
+## Themes: https://hexo.io/themes/
+
 theme: landscape
 exclude_generator:
 
@@ -97,10 +101,30 @@ marked:
 stylus:
   compress: true
 
+# Math
+## https://github.com/akfish/hexo-math
+math:
+  engine: 'mathjax'
+  mathjax:
+    src: '//cdn.bootcss.com/mathjax/2.6.1/MathJax.js?config=TeX-AMS-MML_HTMLorMML'
+    config:
+      tex2jax:
+        processEscapes: true,
+        inlineMath:
+          - ['$','$']
+          - ["\\(","\\)"]
+        skipTags:
+          - script
+          - noscript
+          - style
+          - textarea
+          - pre
+          - code
+
 # Deployment
-## Docs: http://hexo.io/docs/deployment.html
+## Docs: https://hexo.io/docs/deployment.html
 deploy:
-  type: github
+  type: git
   repo: git@github.com:timonwong/timonwong.github.com.git
   branch: master
 
