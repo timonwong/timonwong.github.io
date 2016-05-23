@@ -1,3 +1,4 @@
+---
 title: "VirtualBox与杀毒软件冲突导致虚拟机无法启动: 错误 \"supR3HardenedWinReSpawn\""
 date: 2014-08-05 13:29:44
 categories: Miscellaneous

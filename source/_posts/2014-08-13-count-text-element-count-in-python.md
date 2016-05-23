@@ -1,3 +1,4 @@
+---
 title: 在 Python 中统计文本字符个数
 date: 2014-08-13 14:05:02
 categories: IT

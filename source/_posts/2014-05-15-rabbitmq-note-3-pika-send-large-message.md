@@ -1,4 +1,4 @@
-
+---
 title: 'RabbitMQ笔记（三）: Pika客户端（Python）发送大尺寸消息的问题'
 categories: IT
 tags: [RabbitMQ, Pika, Python]

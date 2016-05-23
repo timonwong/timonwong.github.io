@@ -1,3 +1,4 @@
+---
 title: "Golang 内存模型（一）"
 date: 2014-08-08 08:39:44
 categories: IT
