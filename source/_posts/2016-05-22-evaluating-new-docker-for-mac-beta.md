@@ -24,7 +24,7 @@ Docker for Mac Beta，最大的好处就是不再依赖 VirtualBox VM 了，而�
 **NOTE:** 安装了 `jq` 命令行工具（可以通过 `brew install jq` 安装），可以直接执行一行命令行搞定，否则请参阅「Slow Way」一节：
 
 ```bash
-pinata get daemon | jq -cm '."registry-mirrors" = ["https://docker.mirrors.ustc.edu.cn"]' | pinata set daemon -
+pinata get daemon | jq -cM '."registry-mirrors" = ["https://docker.mirrors.ustc.edu.cn"]' | pinata set daemon -
 ```
 
 ### Slow Way
