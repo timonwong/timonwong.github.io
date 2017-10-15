@@ -3,12 +3,12 @@
 ## Source: https://github.com/hexojs/hexo/
 
 # Site
-title: Timon Wong's Blog
+title: Timon Wong
 subtitle: (╯°□°）╯ ┻━┻
 description:
 author: Timon Wong
 email: timon86.wang@gmail.com
-language:
+language: en
 timezone:
 
 # URL
@@ -84,7 +84,7 @@ disqus_shortname: theoim
 ## Plugins: https://hexo.io/plugins/
 ## Themes: https://hexo.io/themes/
 
-theme: landscape
+theme: even
 exclude_generator:
 
 # Markdown
@@ -103,24 +103,24 @@ stylus:
   compress: true
 
 # Math
-## https://github.com/akfish/hexo-math
-math:
-  engine: 'mathjax'
-  mathjax:
-    src: '//cdn.bootcss.com/mathjax/2.6.1/MathJax.js?config=TeX-AMS-MML_HTMLorMML'
-    config:
-      tex2jax:
-        processEscapes: true,
-        inlineMath:
-          - ['$','$']
-          - ["\\(","\\)"]
-        skipTags:
-          - script
-          - noscript
-          - style
-          - textarea
-          - pre
-          - code
+# https://github.com/akfish/hexo-math
+# math:
+#   engine: 'mathjax'
+#   mathjax:
+#     src: '//cdn.bootcss.com/mathjax/2.7.0/MathJax.js?config=TeX-AMS-MML_HTMLorMML'
+#     config:
+#       tex2jax:
+#         processEscapes: true,
+#         inlineMath:
+#           - ['$','$']
+#           - ["\\(","\\)"]
+#         skipTags:
+#           - script
+#           - noscript
+#           - style
+#           - textarea
+#           - pre
+#           - code
 
 # Deployment
 ## Docs: https://hexo.io/docs/deployment.html
