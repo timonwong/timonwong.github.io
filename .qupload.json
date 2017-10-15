@@ -1,0 +1,16 @@
+{
+    "src_dir": "./cdn",
+    "bucket": "theo-im",
+    "ignore_dir": false,
+    "overwrite": false,
+    "check_exists": false,
+    "check_hash": false,
+    "check_size": true,
+    "rescan_local": true,
+    "skip_fixed_strings": ".svn,.git",
+    "skip_suffixes": ".DS_Store,.exe",
+    "log_level": "info",
+    "log_rotate": 1,
+    "log_stdout": false,
+    "file_type": 0
+}
