@@ -126,7 +126,7 @@ math:
 ## Docs: https://hexo.io/docs/deployment.html
 deploy:
   type: git
-  repo: git@github.com:timonwong/timonwong.github.com.git
+  repo: git@github.com:timonwong/timonwong.github.io.git
   branch: master
 
 sitemap:

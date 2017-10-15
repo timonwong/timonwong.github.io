@@ -5,6 +5,8 @@ categories: IT
 tags: [Docker, OSX]
 ---
 
+DEPRECATION: 现在 Docker for Mac 已经可以通过界面配置 mirror 了，这片文章作废
+
 ## 如何申请 Docker for Mac Beta
 
 请访问这个地址申请，可能需要等几天：https://beta.docker.com/
