@@ -10,5 +10,17 @@ indent_size = 4
 indent_style = space
 indent_size = 2
 
+[*.jade]
+indent_style = space
+indent_size = 2
+
+[*.scss]
+indent_style = space
+indent_size = 2
+
+[*.swig]
+indent_style = space
+indent_size = 2
+
 [Makefile]
 indent_style = tab

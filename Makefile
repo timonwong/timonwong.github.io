@@ -18,7 +18,6 @@ sync: graph
 	qshell qupload .qupload.json
 
 build:
-	hexo clean
 	hexo generate
 
 publish: build
