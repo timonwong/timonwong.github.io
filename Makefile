@@ -20,8 +20,8 @@ sync: graph
 build:
 	hexo generate
 
-publish: build
+deploy: build
 	hexo deploy
 
 
-.PHONY: build publish graph sync
+.PHONY: build deploy graph sync

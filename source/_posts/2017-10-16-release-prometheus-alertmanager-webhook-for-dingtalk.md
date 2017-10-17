@@ -1,8 +1,8 @@
 ---
 title: 将钉钉接入 Prometheus AlertManager WebHook
 date: 2017-10-16 21:08:03
-categories:
-tags:
+categories: Prometheus
+tags: [Prometheus]
 ---
 
 ## TL;DR

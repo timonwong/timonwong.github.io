@@ -42,7 +42,8 @@ HTTP 数据流向如下：
 由于 ELB 并不受我们的控制，所以考虑对后端进行微调。根据不同的场景，可以：
 
 - 增加后端服务器持久连接的保持时间，比如 nginx 增加 `keepalive_timeout` 参数
-- 禁用 HTTP 持久连接）
+- 减少 ELB 的 idle timeout
+- 禁用 HTTP 持久连接（不推荐）
 
 根据[这篇解决 Google Cloud Platform 负载均衡器类似问题的文章](https://blog.percy.io/tuning-nginx-behind-google-cloud-platform-http-s-load-balancer-305982ddb340)，说明我不是一个人😂。
 
