@@ -1,6 +1,6 @@
 {% if (theme.reward.enable and page.reward !== false) or page.reward === true %}
   <div class="post-reward">
-    <input type="checkbox" name="reward" id="reward" hidden />
+    <input type="checkbox" name="reward" id="reward" hidden>
     <label class="reward-button" for="reward">{{ __('posts.reward') }}</label>
     <div class="qr-code">
       {% set qrCode = theme.reward.qrCode %}

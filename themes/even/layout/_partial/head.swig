@@ -12,26 +12,24 @@
 
 {# Website favicon #}
 {% if theme.favicon %}
-  <link rel="shortcut icon" type="image/x-icon" href="{{ url_for(theme.favicon) }}?v={{ theme.version }}" />
+  <link rel="shortcut icon" type="image/x-icon" href="{{ url_for(theme.favicon) }}?v={{ theme.version }}">
 {% endif %}
 
 {# Canonical, good for google search engine #}
-<link rel="canonical" href="{{ config.url }}/{{ page.canonical_path.replace('index.html', '') }}"/>
+<link rel="canonical" href="{{ config.url }}/{{ page.canonical_path.replace('index.html', '') }}">
 
 {# Theme styling #}
-<link rel="stylesheet" type="text/css" href="{{ url_for('css/style.css') }}?v={{ theme.version }}" />
+<link rel="stylesheet" type="text/css" href="{{ url_for('css/style.css') }}?v={{ theme.version }}">
 
 {# Fancybox styling #}
 {% if theme.theme.fancybox %}
-  <link rel="stylesheet" type="text/css" href="{{ url_for('lib/fancybox/jquery.fancybox.css') }}" />
+  <link rel="stylesheet" type="text/css" href="https://cdn.bootcss.com/fancybox/2.1.5/jquery.fancybox.min.css">
 {% endif %}
 
 {# Analytics and push #}
 {% if not env.debug %}
   {% include "../_script/analytics.swig" %}
-  {% include "../_script/push.swig" %}
 {% endif %}
 
 {# LeanCloud Counter #}
 {% include "../_script/counter.swig"%}
-
