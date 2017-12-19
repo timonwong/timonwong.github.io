@@ -8,7 +8,6 @@ tags:
 date: 2017-10-17 16:56:23
 ---
 
-
 ## Summary
 
 不可否认，现在互联网的一个大「单点」就是对象存储 [Amazon S3] 了，大量的应用使用了 S3 的 API，这带来了一个问题，就是应用难于迁移。虽然改客户端这层这个方法，但毕竟侵入性太大，对于一个拥有众多服务的系统来说，实现的成本比较高。
@@ -38,7 +37,7 @@ date: 2017-10-17 16:56:23
 
 ### Interface
 
-一个 Gateway 需要以下接口:
+一个 Gateway 需要实现 GatewayLayer 接口，如下所示:
 
 ```go
 // ObjectLayer implements primitives for object API layer.
@@ -106,7 +105,11 @@ type GatewayLayer interface {
 
 阿里云 OSS API 风格有很重的 AWS S3 痕迹，所以这个「翻译」工作很没有挑战性😜。
 
-~ 所以先站位吧，以后再更（这次不会放鸽子了），代码也会一并放出来（光速逃 ~
+**EDIT(2017-10-23)** Pull Request 请看 [minio/minio#5103](https://github.com/minio/minio/pull/5103)
+
+**EDIT(2017-12-19)** Minio 上游已经合并了 PR，以后就能直接使用了 :)
+
+想吐槽的是 minio 里面结构比较乱，加一个 Gateway 要改很多文件，所以又提交了一个 PR: [minio/minio#5111](https://github.com/minio/minio/pull/5111)
 
 [OSS]: https://www.aliyun.com/product/oss
 [Amazon S3]: https://aws.amazon.com/s3
