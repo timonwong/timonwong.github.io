@@ -150,7 +150,7 @@ struct Eface
 他们的依赖关系如下图所示：
 
 
-![](http://theo-im.qiniudn.com/images/graph/20140808-interface-deps.png)
+![](https://theo-im-1255089908.cos.ap-chengdu.myqcloud.com/images/graph/20140808-interface-deps.png)
 
 
 先到这里，下一篇将会举例子说明给一个 `interface{}` 类型的变量赋值后，其具体的内存结构是怎么样的。

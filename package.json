@@ -3,6 +3,7 @@
   "version": "2.8.2",
   "private": true,
   "dependencies": {
+    "bunyan": "^1.8.12",
     "hexo": "^3.3.9",
     "hexo-browsersync": "^0.2.0",
     "hexo-deployer-git": "^0.3.1",

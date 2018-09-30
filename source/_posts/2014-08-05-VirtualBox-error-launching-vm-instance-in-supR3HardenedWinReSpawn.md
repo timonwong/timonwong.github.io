@@ -7,7 +7,7 @@ tags: [VirtualBox, Vagrant]
 
 今天在公司机器上装了 VirtualBox (版本 4.3.14) 和 Vagrant, 在运行 `vagrant up` 后总是提示虚拟机不能启动的错误。打开 VirtualBox 然后手动启动虚拟机发现如下错误框：
 
-![](http://theo-im.qiniudn.com/images/virtualbox-error.png)
+![](https://theo-im-1255089908.cos.ap-chengdu.myqcloud.com/images/virtualbox-error.png)
 
 
 ```

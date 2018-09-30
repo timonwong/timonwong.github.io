@@ -45,9 +45,9 @@ usage: prometheus-webhook-dingtalk --ding.profile=DING.PROFILE [<flags>]
 
 Flags:
   -h, --help             Show context-sensitive help (also try --help-long and --help-man).
-      --web.listen-address=":8060"  
+      --web.listen-address=":8060"
                          The address to listen on for web interface.
-      --ding.profile=DING.PROFILE ...  
+      --ding.profile=DING.PROFILE ...
                          Custom DingTalk profile (can specify multiple times, <profile>=<dingtalk-url>).
       --ding.timeout=5s  Timeout for invoking DingTalk webhook.
       --log.level=info   Only log messages with the given severity or above. One of: [debug, info, warn, error]
@@ -84,7 +84,7 @@ receivers:
 
 最后，来个截图看看效果吧：
 
-![](http://theo-im.qiniudn.com/images/2016-10-16-dingtalk-in-action.png)
+![](https://theo-im-1255089908.cos.ap-chengdu.myqcloud.com/images/2016-10-16-dingtalk-in-action.png)
 
 
 [Slack]: https://slack.com
