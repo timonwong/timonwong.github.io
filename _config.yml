@@ -107,7 +107,7 @@ stylus:
 # math:
 #   engine: 'mathjax'
 #   mathjax:
-#     src: '//cdn.bootcss.com/mathjax/2.7.1/MathJax.js?config=TeX-AMS-MML_HTMLorMML'
+#     src: '//cdn.staticfile.org/mathjax/2.7.1/MathJax.js?config=TeX-AMS-MML_HTMLorMML'
 #     config:
 #       tex2jax:
 #         processEscapes: true,

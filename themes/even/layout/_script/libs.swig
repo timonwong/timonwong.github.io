@@ -1,11 +1,11 @@
 {% if theme.theme.fancybox %}
-  {% set fancybox_js = 'https://cdn.bootcss.com/fancybox/2.1.5/jquery.fancybox.pack.js' %}
+  {% set fancybox_js = 'https://cdn.staticfile.org/fancybox/2.1.5/jquery.fancybox.pack.js' %}
 {% endif %}
 
 {%
   set js_libs = {
-    jquery: 'https://cdn.bootcss.com/jquery/3.1.1/jquery.min.js',
-    slideout: 'https://cdn.bootcss.com/slideout/1.0.1/slideout.js',
+    jquery: 'https://cdn.staticfile.org/jquery/3.1.1/jquery.min.js',
+    slideout: 'https://cdn.staticfile.org/slideout/1.0.1/slideout.min.js',
     fancybox: fancybox_js
   }
 %}
@@ -25,4 +25,4 @@
     }
   });
 </script>
-<script type="text/javascript" async src="https://cdn.bootcss.com/mathjax/2.7.1/MathJax.js?config=TeX-AMS-MML_HTMLorMML" integrity="sha384-Ra6zh6uYMmH5ydwCqqMoykyf1T/+ZcnOQfFPhDrp2kI4OIxadnhsvvA2vv9A7xYv" crossorigin="anonymous"></script>
+<script type="text/javascript" async src="https://cdn.staticfile.org/mathjax/2.7.1/MathJax.js?config=TeX-AMS-MML_HTMLorMML" integrity="sha384-Ra6zh6uYMmH5ydwCqqMoykyf1T/+ZcnOQfFPhDrp2kI4OIxadnhsvvA2vv9A7xYv" crossorigin="anonymous"></script>

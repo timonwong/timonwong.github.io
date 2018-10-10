@@ -23,7 +23,7 @@
 
 {# Fancybox styling #}
 {% if theme.theme.fancybox %}
-  <link rel="stylesheet" type="text/css" href="https://cdn.bootcss.com/fancybox/2.1.5/jquery.fancybox.min.css">
+  <link rel="stylesheet" type="text/css" href="https://cdn.staticfile.org/fancybox/2.1.5/jquery.fancybox.min.css">
 {% endif %}
 
 {# Analytics and push #}
