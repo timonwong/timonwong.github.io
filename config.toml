@@ -13,6 +13,11 @@ pygmentscodefencesguesssyntax = true
 googleAnalytics = 'UA-35644871-2'
 disqusShortname = 'theoim'
 
+[params]
+mode = "auto"
+useCDN = true
+subtitle = "(╯°□°）╯ ┻━┻"
+
 [frontmatter]
 date = [":filename", ":default"]
 
