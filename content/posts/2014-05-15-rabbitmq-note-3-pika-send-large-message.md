@@ -36,9 +36,11 @@ date: 2014-05-15 10:27:25
 
 看出问题了吗？
 
-来看看[socket.send](https://docs.python.org/2/library/socket.html#socket.socket.send)的文档吧：
+来看看`socket.send`的文档吧：
 
-> Send data to the socket. The socket must be connected to a remote socket. The optional flags argument has the same meaning as for recv() above. Returns the number of bytes sent. Applications are responsible for checking that all data has been sent; if only some of the data was transmitted, the application needs to attempt delivery of the remaining data. For further information on this concept, consult the Socket Programming HOWTO.
+{{<blockquote author="Python Docs" link="https://docs.python.org/2/library/socket.html#socket.socket.send" title="socket.send">}}
+Send data to the socket. The socket must be connected to a remote socket. The optional flags argument has the same meaning as for recv() above. Returns the number of bytes sent. Applications are responsible for checking that all data has been sent; if only some of the data was transmitted, the application needs to attempt delivery of the remaining data. For further information on this concept, consult the Socket Programming HOWTO.
+{{</blockquote>}}
 
 问题就是，没有检查 `socket.send` 的返回值，由于 `socket.send` 返回实际发送的直接个数，可能会小于期望（在这里是
 `self.outbound_buffer.popleft()`）。

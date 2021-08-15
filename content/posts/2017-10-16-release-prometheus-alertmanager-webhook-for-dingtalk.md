@@ -83,7 +83,7 @@ receivers:
 
 最后，来个截图看看效果吧：
 
-![](https://theo-im-1255089908.cos.ap-chengdu.myqcloud.com/images/2016-10-16-dingtalk-in-action.png)
+![](/images/2016-10-16-dingtalk-in-action.png)
 
 
 [Slack]: https://slack.com

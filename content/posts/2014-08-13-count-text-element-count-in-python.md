@@ -78,7 +78,7 @@ assert len(u'ë́') == 2
 
 ```
 
-![](https://theo-im-1255089908.cos.ap-chengdu.myqcloud.com/images/yaoming-face.jpg)
+![](/images/yaoming-face.jpg)
 
 所以最怕半罐水了（当然也包括我自己，太可怕了）。
 

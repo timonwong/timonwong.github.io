@@ -22,7 +22,7 @@ HTTP 数据流向如下：
 
 先补充一个知识：如果后端支持的话，ELB 会使用保持连接（HTTP persistent/keep-alive connections）。来看看这一个保持连接的 TCP stream：
 
-![](https://theo-im-1255089908.cos.ap-chengdu.myqcloud.com/images/2017-10-14-tcpdump.png)
+![](/images/2017-10-14-tcpdump.png)
 
 其中，`10.100.2.186` 是 ELB 内部 IP，`10.100.250.22` 是 nginx 服务器内部 IP。这样，可以看到：
 

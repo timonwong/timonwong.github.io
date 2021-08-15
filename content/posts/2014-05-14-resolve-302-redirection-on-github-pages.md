@@ -15,9 +15,12 @@ tags: [GitHub, DNS]
 curl -I http://theo.im/sitemap.xml
 ```
 
-发现得到的是302转向，不符合[Sitemap协议](https://www.sitemaps.org/protocol.html)的要求：
+发现得到的是302转向，不符合Sitemap协议的要求：
 
-> A successful request will return an HTTP 200 response code; if you receive a different response, you should resubmit your request. The HTTP 200 response code only indicates that the search engine has received your Sitemap, not that the Sitemap itself or the URLs contained in it were valid.
+{{<blockquote title="Sitemap Protocol" link="https://www.sitemaps.org/protocol.html">}}
+A successful request will return an HTTP 200 response code; if you receive a different response, you should resubmit your request. The HTTP 200 response code only indicates that the search engine has received your Sitemap, not that the Sitemap itself or the URLs contained in it were valid.
+{{</blockquote>}}
+
 
 [GitHub Pages文档]: https://help.github.com/articles/setting-up-a-custom-domain-with-github-pages
 
@@ -33,11 +36,11 @@ curl -I http://theo.im/sitemap.xml
 
 本着能用收费不用免费的原则，因此我选择了 [DNSimple] 来解析我的域名 (゜o゜(☆○=(-_-)
 
-![](https://theo-im-1255089908.cos.ap-chengdu.myqcloud.com/images/github-pages-dns-buybuybuy.jpg)
+![](/images/github-pages-dns-buybuybuy.jpg)
 
 OK，万文不如一图：
 
-![](https://theo-im-1255089908.cos.ap-chengdu.myqcloud.com/images/github-pages-dns-setup.png)
+![](/images/github-pages-dns-setup.png)
 
 最后，运行 `dig theo.im +nostats +nocomments +nocmd` 检查DNS是否生效：
 
