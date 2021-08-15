@@ -10,6 +10,7 @@ pygmentsstyle = "monokai"
 pygmentscodefences = true
 pygmentscodefencesguesssyntax = true
 
+googleAnalytics = 'UA-35644871-2'
 disqusShortname = 'theoim'
 
 [frontmatter]
