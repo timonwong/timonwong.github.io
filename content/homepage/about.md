@@ -1,5 +1,5 @@
 ---
-title: timonwong's thoughs
+title: timonwong's thoughts
 draft: false
 bio:  (╯°□°）╯ ┻━┻📘
 social:
