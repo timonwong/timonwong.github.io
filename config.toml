@@ -1,0 +1,38 @@
+baseURL = 'https://theo.im/'
+languageCode = 'zh-cn'
+title = 'Timon Wong'
+
+theme = "archie"
+copyright = "© timonwong"
+
+# Code Highlight
+pygmentsstyle = "monokai"
+pygmentscodefences = true
+pygmentscodefencesguesssyntax = true
+
+[frontmatter]
+date = [":filename", ":default"]
+
+[permalinks]
+posts = '/blog/:year/:month/:day/:slug/'
+
+[[menu.main]]
+name = "Home"
+url = "/"
+weight = 1
+
+[[menu.main]]
+name = "Posts"
+url = "/posts"
+weight = 2
+
+[[menu.main]]
+name = "Tags"
+url = "/tags"
+weight = 4
+
+# Social Tags
+[[params.social]]
+name = "GitHub"
+icon = "github"
+url = "https://github.com/timonwong"
