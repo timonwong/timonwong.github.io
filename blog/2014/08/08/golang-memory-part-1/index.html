@@ -24,9 +24,12 @@ package main import &#34;fmt&#34; type A struct { } func main() { var a *A = nil
 此 nil 不等彼 nil 先声明，这个标题有标题党的嫌疑。
 Go 的类型系统是比较奇葩的，nil 的含义跟其它语言有些差别，这里举个例子（可以直接进入 http://play.golang.org/p/ezFhXX0dnB 运行查看结果）：
 package main import &#34;fmt&#34; type A struct { } func main() { var a *A = nil var ai interface{} = a var ei interface{} = nil fmt.Printf(&#34;ai == nil: %v\n&#34;, ai == nil) fmt.Printf(&#34;ai == ei: %v\n&#34;, ai == ei) fmt.Printf(&#34;ei == a: %v\n&#34;, a == ei) fmt.Printf(&#34;ei == nil: %v\n&#34;, ei == nil) } // -> 输出 // ai == nil: false // ai == ei: false // ei == a: false // ei == nil: true 这里 ai !">
-<script src=https://theo.im/js/feather.min.js></script>
-<link href=https://theo.im/css/fonts.b685ac6f654695232de7b82a9143a46f9e049c8e3af3a21d9737b01f4be211d1.css rel=stylesheet>
+<script src=https://cdn.jsdelivr.net/npm/feather-icons/dist/feather.min.js></script>
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:ital,wght@1,500&display=swap" rel=stylesheet>
+<link href="https://fonts.googleapis.com/css2?family=Fira+Sans&display=swap" rel=stylesheet>
+<link href="https://fonts.googleapis.com/css?family=Roboto+Mono" rel=stylesheet>
 <link rel=stylesheet type=text/css media=screen href=https://theo.im/css/main.2f9b5946627215dc1ae7fa5f82bfc9cfcab000329136befeea5733f21e77d68f.css>
+<link rel=stylesheet type=text/css href=https://theo.im/css/dark.726cd11ca6eb7c4f7d48eb420354f814e5c1b94281aaf8fd0511c1319f7f78a4.css media="(prefers-color-scheme: dark)">
 </head>
 <body>
 <div class=content><header>

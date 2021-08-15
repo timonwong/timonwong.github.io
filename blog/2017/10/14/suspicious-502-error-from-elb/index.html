@@ -24,9 +24,12 @@ HTTP 数据流向如下：
 [Client] --- [ELB] --- [nginx] --- [App Servers] 排查问题 最开始是怀疑是后端问题，但是查阅了 nginx 和 App servers 的日志，没有任何结果，只是在 ELB 日志里面找到了 502 Bad Gateway 的错误信息。无奈之下甚至怀疑 nginx 所在 EC2 instance 有问题，因此求助了 AWS 技术支持。根据建议，在 nginx 这端做了 tcpdump 抓包，最后终于在 AWS 技术支持的帮助下，定位并解决了问题 🎉。
 先补充一个知识：如果后端支持的话，ELB 会使用保持连接（HTTP persistent/keep-alive connections）。来看看这一个保持连接的 TCP stream：
 其中，10.100.2.186 是 ELB 内部 IP，10.100.250.22 是 nginx 服务器内部 IP。这样，可以看到：">
-<script src=https://theo.im/js/feather.min.js></script>
-<link href=https://theo.im/css/fonts.b685ac6f654695232de7b82a9143a46f9e049c8e3af3a21d9737b01f4be211d1.css rel=stylesheet>
+<script src=https://cdn.jsdelivr.net/npm/feather-icons/dist/feather.min.js></script>
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:ital,wght@1,500&display=swap" rel=stylesheet>
+<link href="https://fonts.googleapis.com/css2?family=Fira+Sans&display=swap" rel=stylesheet>
+<link href="https://fonts.googleapis.com/css?family=Roboto+Mono" rel=stylesheet>
 <link rel=stylesheet type=text/css media=screen href=https://theo.im/css/main.2f9b5946627215dc1ae7fa5f82bfc9cfcab000329136befeea5733f21e77d68f.css>
+<link rel=stylesheet type=text/css href=https://theo.im/css/dark.726cd11ca6eb7c4f7d48eb420354f814e5c1b94281aaf8fd0511c1319f7f78a4.css media="(prefers-color-scheme: dark)">
 </head>
 <body>
 <div class=content><header>

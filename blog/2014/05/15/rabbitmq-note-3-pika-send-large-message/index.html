@@ -30,9 +30,12 @@ NOTE: 即使在本文写时的最新版(v0.9.13)依然存在这个问题。
 def _handle_write(self): &#34;&#34;&#34;Handle any outbound buffer writes that need to take place.&#34;&#34;&#34; total_written = 0 if self.outbound_buffer: try: bytes_written = self.socket.send(self.outbound_buffer.popleft()) except socket.timeout: raise except socket.error, error: return self._handle_error(error) total_written += bytes_written return total_written 看出问题了吗？
 来看看socket.send的文档吧：
  Send data to the socket. The socket must be connected to a remote socket. The optional flags argument has the same meaning as for recv() above.">
-<script src=https://theo.im/js/feather.min.js></script>
-<link href=https://theo.im/css/fonts.b685ac6f654695232de7b82a9143a46f9e049c8e3af3a21d9737b01f4be211d1.css rel=stylesheet>
+<script src=https://cdn.jsdelivr.net/npm/feather-icons/dist/feather.min.js></script>
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:ital,wght@1,500&display=swap" rel=stylesheet>
+<link href="https://fonts.googleapis.com/css2?family=Fira+Sans&display=swap" rel=stylesheet>
+<link href="https://fonts.googleapis.com/css?family=Roboto+Mono" rel=stylesheet>
 <link rel=stylesheet type=text/css media=screen href=https://theo.im/css/main.2f9b5946627215dc1ae7fa5f82bfc9cfcab000329136befeea5733f21e77d68f.css>
+<link rel=stylesheet type=text/css href=https://theo.im/css/dark.726cd11ca6eb7c4f7d48eb420354f814e5c1b94281aaf8fd0511c1319f7f78a4.css media="(prefers-color-scheme: dark)">
 </head>
 <body>
 <div class=content><header>
