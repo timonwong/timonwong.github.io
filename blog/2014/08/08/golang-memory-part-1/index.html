@@ -1,84 +1,122 @@
-<!doctype html><html><head>
-<meta charset=utf-8>
-<meta http-equiv=x-ua-compatible content="IE=edge"><title>Golang 内存模型（一） - Timon Wong</title><meta name=viewport content="width=device-width,initial-scale=1">
-<meta name=description content="开始之前 首先，这是一篇菜B写的文章，可能会有理解错误的地方，发现错误请斧正，谢谢。
-为了治疗我的懒癌早期，我一次就不写得太多了，这个系列想写很久了，每次都是开了个头就没有再写。这次争取把写完，弄成一个系列。
-此 nil 不等彼 nil 先声明，这个标题有标题党的嫌疑。
-Go 的类型系统是比较奇葩的，nil 的含义跟其它语言有些差别，这里举个例子（可以直接进入 http://play.golang.org/p/ezFhXX0dnB 运行查看结果）：
-package main import &#34;fmt&#34; type A struct { } func main() { var a *A = nil var ai interface{} = a var ei interface{} = nil fmt.Printf(&#34;ai == nil: %v\n&#34;, ai == nil) fmt.Printf(&#34;ai == ei: %v\n&#34;, ai == ei) fmt.Printf(&#34;ei == a: %v\n&#34;, a == ei) fmt.Printf(&#34;ei == nil: %v\n&#34;, ei == nil) } // -> 输出 // ai == nil: false // ai == ei: false // ei == a: false // ei == nil: true 这里 ai !">
-<meta property="og:image" content>
-<meta property="og:title" content="Golang 内存模型（一）">
-<meta property="og:description" content="开始之前 首先，这是一篇菜B写的文章，可能会有理解错误的地方，发现错误请斧正，谢谢。
-为了治疗我的懒癌早期，我一次就不写得太多了，这个系列想写很久了，每次都是开了个头就没有再写。这次争取把写完，弄成一个系列。
-此 nil 不等彼 nil 先声明，这个标题有标题党的嫌疑。
-Go 的类型系统是比较奇葩的，nil 的含义跟其它语言有些差别，这里举个例子（可以直接进入 http://play.golang.org/p/ezFhXX0dnB 运行查看结果）：
-package main import &#34;fmt&#34; type A struct { } func main() { var a *A = nil var ai interface{} = a var ei interface{} = nil fmt.Printf(&#34;ai == nil: %v\n&#34;, ai == nil) fmt.Printf(&#34;ai == ei: %v\n&#34;, ai == ei) fmt.Printf(&#34;ei == a: %v\n&#34;, a == ei) fmt.Printf(&#34;ei == nil: %v\n&#34;, ei == nil) } // -> 输出 // ai == nil: false // ai == ei: false // ei == a: false // ei == nil: true 这里 ai !">
+<!doctype html><html lang=en><meta charset=utf-8>
+<meta name=viewport content="width=device-width">
+<title>Golang 内存模型（一） | timonwong</title>
+<meta name=generator content="Hugo Eureka 0.8.2">
+<link rel=stylesheet href=https://theo.im/css/eureka.min.css>
+<script defer src=https://theo.im/js/eureka.min.js></script>
+<link rel=preconnect href=https://fonts.gstatic.com crossorigin>
+<link rel=preload href="https://fonts.googleapis.com/css2?family=Lora:wght@400;600;700&family=Noto+Serif+SC:wght@400;600;700&display=swap" as=style onload="this.onload=null,this.rel='stylesheet'">
+<link rel=stylesheet href=https://cdn.jsdelivr.net/gh/highlightjs/cdn-release@10.1.0/build/styles/solarized-light.min.css media=print onload="this.media='all',this.onload=null" crossorigin>
+<script defer src=https://cdn.jsdelivr.net/gh/highlightjs/cdn-release@10.1.0/build/highlight.min.js crossorigin></script>
+<script defer src=https://cdn.jsdelivr.net/gh/highlightjs/cdn-release@10.1.0/build/languages/dart.min.js crossorigin></script>
+<script defer src=https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@5.14.0/js/all.min.js integrity="sha256-uNYoXefWRqv+PsIF/OflNmwtKM4lStn9yrz2gVl6ymo=" crossorigin></script>
+<link rel=stylesheet href=https://cdn.jsdelivr.net/npm/katex@0.12.0/dist/katex.min.css integrity=sha384-AfEj0r4/OFrOo5t7NnNe46zW/tFgW6x/bCJG8FqQCEo3+Aro6EYUG4+cU+KJWu/X media=print onload="this.media='all',this.onload=null" crossorigin>
+<script defer src=https://cdn.jsdelivr.net/npm/katex@0.12.0/dist/katex.min.js integrity=sha384-g7c+Jr9ZivxKLnZTDUhnkOnsh30B4H0rpLUpJ4jAIKs4fnJI+sEnkvrMWph2EDg4 crossorigin></script>
+<script defer src=https://cdn.jsdelivr.net/npm/katex@0.12.0/dist/contrib/auto-render.min.js integrity=sha384-mll67QQFJfxn0IYznZYonOWZ644AWYC+Pt2cHqMaRhXVrursRwvLnLaebdGIlYNa crossorigin></script>
+<script>document.addEventListener("DOMContentLoaded",function(){renderMathInElement(document.body,{delimiters:[{left:"$$",right:"$$",display:!0},{left:"$",right:"$",display:!1},{left:"\\(",right:"\\)",display:!1},{left:"\\[",right:"\\]",display:!0}]})})</script>
+<script defer src=https://cdn.jsdelivr.net/npm/mermaid@8.9.2/dist/mermaid.min.js integrity="sha256-Zmpaaj+GXFsPF5WdPArSrnW3b30dovldeKsW00xBVwE=" crossorigin></script>
+<link rel=preconnect href=https://www.google-analytics.com crossorigin>
+<script async src="https://www.googletagmanager.com/gtag/js?id=UA-35644871-2"></script>
+<script>window.dataLayer=window.dataLayer||[];function gtag(){dataLayer.push(arguments)}gtag('js',new Date),gtag('config','UA-35644871-2')</script>
+<link rel=icon type=image/png sizes=32x32 href=https://theo.im/images/icon_hu64421c6c7700f606f0ad45d807017b09_5843_32x32_fill_box_center_3.png>
+<link rel=apple-touch-icon sizes=180x180 href=https://theo.im/images/icon_hu64421c6c7700f606f0ad45d807017b09_5843_180x180_fill_box_center_3.png>
+<meta name=description content="开始之前 首先，这是一篇菜B写的文章，可能会有理解错误的地方，发现错误请斧正，谢谢。 为了治疗我的懒癌早期，我一次就不写得太多了，这个系列想写很久了，每次">
+<script type=application/ld+json>{"@context":"https://schema.org","@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","position":1,"name":"Posts","item":"https://theo.im/posts/"},{"@type":"ListItem","position":2,"name":"Golang 内存模型（一）","item":"https://theo.im/blog/2014/08/08/golang-memory-part-1/"}]}</script>
+<script type=application/ld+json>{"@context":"https://schema.org","@type":"Article","mainEntityOfPage":{"@type":"WebPage","@id":"https://theo.im/blog/2014/08/08/golang-memory-part-1/"},"headline":"Golang 内存模型（一） | timonwong","datePublished":"2014-08-08T08:39:44+00:00","dateModified":"2014-08-08T08:39:44+00:00","wordCount":1256,"publisher":{"@type":"Person","name":"timonwong","logo":{"@type":"ImageObject","url":"https://theo.im/images/icon.png"}},"description":"开始之前 首先，这是一篇菜B写的文章，可能会有理解错误的地方，发现错误请斧正，谢谢。 为了治疗我的懒癌早期，我一次就不写得太多了，这个系列想写很久了，每次"}</script><meta property="og:title" content="Golang 内存模型（一） | timonwong">
 <meta property="og:type" content="article">
-<meta property="og:url" content="https://theo.im/blog/2014/08/08/golang-memory-part-1/"><meta property="article:section" content="posts">
+<meta property="og:image" content="https://theo.im/images/icon.png">
+<meta property="og:url" content="https://theo.im/blog/2014/08/08/golang-memory-part-1/">
+<meta property="og:description" content="开始之前 首先，这是一篇菜B写的文章，可能会有理解错误的地方，发现错误请斧正，谢谢。 为了治疗我的懒癌早期，我一次就不写得太多了，这个系列想写很久了，每次">
+<meta property="og:locale" content="en">
+<meta property="og:site_name" content="timonwong">
 <meta property="article:published_time" content="2014-08-08T08:39:44+00:00">
 <meta property="article:modified_time" content="2014-08-08T08:39:44+00:00">
-<meta name=twitter:card content="summary">
-<meta name=twitter:title content="Golang 内存模型（一）">
-<meta name=twitter:description content="开始之前 首先，这是一篇菜B写的文章，可能会有理解错误的地方，发现错误请斧正，谢谢。
-为了治疗我的懒癌早期，我一次就不写得太多了，这个系列想写很久了，每次都是开了个头就没有再写。这次争取把写完，弄成一个系列。
-此 nil 不等彼 nil 先声明，这个标题有标题党的嫌疑。
-Go 的类型系统是比较奇葩的，nil 的含义跟其它语言有些差别，这里举个例子（可以直接进入 http://play.golang.org/p/ezFhXX0dnB 运行查看结果）：
-package main import &#34;fmt&#34; type A struct { } func main() { var a *A = nil var ai interface{} = a var ei interface{} = nil fmt.Printf(&#34;ai == nil: %v\n&#34;, ai == nil) fmt.Printf(&#34;ai == ei: %v\n&#34;, ai == ei) fmt.Printf(&#34;ei == a: %v\n&#34;, a == ei) fmt.Printf(&#34;ei == nil: %v\n&#34;, ei == nil) } // -> 输出 // ai == nil: false // ai == ei: false // ei == a: false // ei == nil: true 这里 ai !">
-<script src=https://cdn.jsdelivr.net/npm/feather-icons/dist/feather.min.js></script>
-<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:ital,wght@1,500&display=swap" rel=stylesheet>
-<link href="https://fonts.googleapis.com/css2?family=Fira+Sans&display=swap" rel=stylesheet>
-<link href="https://fonts.googleapis.com/css?family=Roboto+Mono" rel=stylesheet>
-<link rel=stylesheet type=text/css media=screen href=https://theo.im/css/main.2f9b5946627215dc1ae7fa5f82bfc9cfcab000329136befeea5733f21e77d68f.css>
-<link rel=stylesheet type=text/css href=https://theo.im/css/dark.726cd11ca6eb7c4f7d48eb420354f814e5c1b94281aaf8fd0511c1319f7f78a4.css media="(prefers-color-scheme: dark)">
-</head>
-<body>
-<div class=content><header>
-<div class=main>
-<a href=https://theo.im/>Timon Wong</a>
+<meta property="article:section" content="posts">
+<meta property="article:tag" content="Go">
+<meta property="article:tag" content="Golang">
+<meta property="og:see_also" content="https://theo.im/blog/2014/07/21/printing-stacktrace-in-go/">
+<body class="flex flex-col min-h-screen">
+<header class="fixed flex items-center w-full min-h-16 pl-scrollbar z-50 bg-secondary-bg shadow-sm">
+<div class="w-full max-w-screen-xl mx-auto"><script>let storageColorScheme=localStorage.getItem("lightDarkMode");((storageColorScheme=='Auto'||storageColorScheme==null)&&window.matchMedia("(prefers-color-scheme: dark)").matches||storageColorScheme=="Dark")&&document.getElementsByTagName('html')[0].classList.add('dark')</script>
+<nav class="flex items-center justify-between flex-wrap px-4 py-4 md:py-0">
+<a href=/ class="mr-6 text-primary-text text-xl font-bold">timonwong</a>
+<button id=navbar-btn class="md:hidden flex items-center px-3 py-2" aria-label="Open Navbar">
+<i class="fas fa-bars"></i>
+</button>
+<div id=target class="hidden block md:flex md:flex-grow md:justify-between md:items-center w-full md:w-auto text-primary-text z-20">
+<div class="md:flex md:h-16 text-sm md:flex-grow pb-4 md:pb-0 border-b md:border-b-0">
+<a href=/posts/ class="block mt-4 md:inline-block md:mt-0 md:h-(16-4px) md:leading-(16-4px) box-border md:border-t-2 md:border-b-2 border-transparent mr-4">Posts</a>
+<a href=/tags/ class="block mt-4 md:inline-block md:mt-0 md:h-(16-4px) md:leading-(16-4px) box-border md:border-t-2 md:border-b-2 border-transparent mr-4">Tags</a>
 </div>
-<nav>
-<a href=/>Home</a>
-<a href=/posts>Posts</a>
-<a href=/tags>Tags</a>
+<div class=flex>
+<div class="relative pt-4 md:pt-0">
+<div class="cursor-pointer hover:text-eureka" id=lightDarkMode>
+<i class="fas fa-adjust"></i>
+</div>
+<div class="fixed hidden inset-0 opacity-0 h-full w-full cursor-default z-30" id=is-open>
+</div>
+<div class="absolute flex flex-col left-0 md:left-auto right-auto md:right-0 hidden bg-secondary-bg w-48 rounded py-2 border border-tertiary-bg cursor-pointer z-40" id=lightDarkOptions>
+<span class="px-4 py-1 hover:text-eureka" name=Light>Light</span>
+<span class="px-4 py-1 hover:text-eureka" name=Dark>Dark</span>
+<span class="px-4 py-1 hover:text-eureka" name=Auto>Auto</span>
+</div>
+</div>
+</div>
+</div>
+<div class="fixed hidden inset-0 opacity-0 h-full w-full cursor-default z-0" id=is-open-mobile>
+</div>
 </nav>
-</header>
-<main>
-<article>
-<div class=title>
-<h1 class=title>Golang 内存模型（一）</h1>
-<div class=meta>Posted on Aug 8, 2014</div>
+<script>let element=document.getElementById('lightDarkMode');storageColorScheme==null||storageColorScheme=='Auto'?document.addEventListener('DOMContentLoaded',()=>{window.matchMedia("(prefers-color-scheme: dark)").addEventListener('change',switchDarkMode)}):storageColorScheme=="Light"?(element.firstElementChild.classList.remove('fa-adjust'),element.firstElementChild.setAttribute("data-icon",'sun'),element.firstElementChild.classList.add('fa-sun')):storageColorScheme=="Dark"&&(element.firstElementChild.classList.remove('fa-adjust'),element.firstElementChild.setAttribute("data-icon",'moon'),element.firstElementChild.classList.add('fa-moon')),document.addEventListener('DOMContentLoaded',()=>{getcolorscheme(),switchBurger()})</script>
 </div>
-<section class=body>
+</header>
+<main class="flex-grow pt-16">
+<div class=pl-scrollbar>
+<div class="w-full max-w-screen-xl lg:px-4 xl:px-8 mx-auto">
+<div class="grid grid-cols-2 lg:grid-cols-8 gap-4 lg:pt-12">
+<div class="col-span-2 lg:col-start-2 lg:col-span-6 bg-secondary-bg rounded px-6 py-8">
+<h1 class="font-bold text-3xl text-primary-text">Golang 内存模型（一）</h1>
+<div class="flex flex-wrap flex-row items-center mt-2 text-tertiary-text">
+<div class="mr-6 my-2">
+<i class="fas fa-calendar mr-1"></i>
+<span>2014-08-08</span>
+</div>
+<div class="mr-6 my-2">
+<i class="fas fa-clock mr-1"></i>
+<span>3 min read</span>
+</div>
+</div>
+<div class=content>
 <h2 id=开始之前>开始之前</h2>
 <p>首先，这是一篇菜B写的文章，可能会有理解错误的地方，发现错误请斧正，谢谢。</p>
 <p>为了治疗我的懒癌早期，我一次就不写得太多了，这个系列想写很久了，每次都是开了个头就没有再写。这次争取把写完，弄成一个系列。</p>
 <h2 id=此-nil-不等彼-nil>此 nil 不等彼 nil</h2>
 <p><em>先声明，这个标题有标题党的嫌疑。</em></p>
 <p>Go 的类型系统是比较奇葩的，<code>nil</code> 的含义跟其它语言有些差别，这里举个例子（可以直接进入 <a href=http://play.golang.org/p/ezFhXX0dnB>http://play.golang.org/p/ezFhXX0dnB</a> 运行查看结果）：</p>
-<div class=highlight><pre tabindex=0 style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-go data-lang=go><span style=color:#f92672>package</span> <span style=color:#a6e22e>main</span>
+<pre><code class=language-go>package main
 
-<span style=color:#f92672>import</span> <span style=color:#e6db74>&#34;fmt&#34;</span>
+import &quot;fmt&quot;
 
-<span style=color:#66d9ef>type</span> <span style=color:#a6e22e>A</span> <span style=color:#66d9ef>struct</span> {
+type A struct {
 }
 
-<span style=color:#66d9ef>func</span> <span style=color:#a6e22e>main</span>() {
-    <span style=color:#66d9ef>var</span> <span style=color:#a6e22e>a</span> <span style=color:#f92672>*</span><span style=color:#a6e22e>A</span> = <span style=color:#66d9ef>nil</span>
-    <span style=color:#66d9ef>var</span> <span style=color:#a6e22e>ai</span> <span style=color:#66d9ef>interface</span>{} = <span style=color:#a6e22e>a</span>
-    <span style=color:#66d9ef>var</span> <span style=color:#a6e22e>ei</span> <span style=color:#66d9ef>interface</span>{} = <span style=color:#66d9ef>nil</span>
+func main() {
+    var a *A = nil
+    var ai interface{} = a
+    var ei interface{} = nil
 
-    <span style=color:#a6e22e>fmt</span>.<span style=color:#a6e22e>Printf</span>(<span style=color:#e6db74>&#34;ai == nil: %v\n&#34;</span>, <span style=color:#a6e22e>ai</span> <span style=color:#f92672>==</span> <span style=color:#66d9ef>nil</span>)
-    <span style=color:#a6e22e>fmt</span>.<span style=color:#a6e22e>Printf</span>(<span style=color:#e6db74>&#34;ai == ei: %v\n&#34;</span>, <span style=color:#a6e22e>ai</span> <span style=color:#f92672>==</span> <span style=color:#a6e22e>ei</span>)
-    <span style=color:#a6e22e>fmt</span>.<span style=color:#a6e22e>Printf</span>(<span style=color:#e6db74>&#34;ei == a: %v\n&#34;</span>, <span style=color:#a6e22e>a</span> <span style=color:#f92672>==</span> <span style=color:#a6e22e>ei</span>)
-    <span style=color:#a6e22e>fmt</span>.<span style=color:#a6e22e>Printf</span>(<span style=color:#e6db74>&#34;ei == nil: %v\n&#34;</span>, <span style=color:#a6e22e>ei</span> <span style=color:#f92672>==</span> <span style=color:#66d9ef>nil</span>)
+    fmt.Printf(&quot;ai == nil: %v\n&quot;, ai == nil)
+    fmt.Printf(&quot;ai == ei: %v\n&quot;, ai == ei)
+    fmt.Printf(&quot;ei == a: %v\n&quot;, a == ei)
+    fmt.Printf(&quot;ei == nil: %v\n&quot;, ei == nil)
 }
 
-<span style=color:#75715e>// -&gt; 输出
-</span><span style=color:#75715e>// ai == nil: false
-</span><span style=color:#75715e>// ai == ei: false
-</span><span style=color:#75715e>// ei == a: false
-</span><span style=color:#75715e>// ei == nil: true
-</span></code></pre></div><p>这里 <code>ai != nil</code>，对于没有用过 Go 的人来说比较费解，对我来说，这个算得上一门语言设计有歧义的地方（Golang FAQ 有对于此问题的描述，可以参考一下：<a href=http://golang.org/doc/faq#nil_error>http://golang.org/doc/faq#nil_error</a>）。</p>
+// -&gt; 输出
+// ai == nil: false
+// ai == ei: false
+// ei == a: false
+// ei == nil: true
+</code></pre>
+<p>这里 <code>ai != nil</code>，对于没有用过 Go 的人来说比较费解，对我来说，这个算得上一门语言设计有歧义的地方（Golang FAQ 有对于此问题的描述，可以参考一下：<a href=http://golang.org/doc/faq#nil_error>http://golang.org/doc/faq#nil_error</a>）。</p>
 <p>简单的说就是 nil 代表 &ldquo;zero value&rdquo;（空值），<strong>对于不同类型，它具体所代表的值不同</strong>。比如上面的 <code>a</code> 为“<code>*A</code> 类型的空值”，而 <code>ai</code> 为“<code>interface{}</code> 类型的空值”。造成理解失误的最大问题在于，<code>struct pointer</code> 到 <code>interface</code> 有隐式转换（<code>var ai interface{] = a</code>，这里有个隐式转换），至于为什么对于 Go 这种在其它转换方面要求严格，而对于 <code>interface</code> 要除外呢，for convenience 吧，呵呵……</p>
 <p>碰到了这个坑，我就开始好奇了，Go 的类型系统到底是什么样的？</p>
 <h2 id=go-内存模型---interface>Go 内存模型 - interface</h2>
@@ -109,13 +147,14 @@ package main import &#34;fmt&#34; type A struct { } func main() { var a *A = nil
 <li>Type: 类型描述，所有的类型都有这个类型描述（比如 array, map, slice）</li>
 <li>mhdr 以及 m: interface 接口方法列表</li>
 </ul>
-<div class=highlight><pre tabindex=0 style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-c data-lang=c><span style=color:#66d9ef>struct</span> InterfaceType
+<pre><code class=language-c>struct InterfaceType
 {
     Type;
     Slice mhdr;
     IMethod m[];
 };
-</code></pre></div><p><strong>Itab:</strong></p>
+</code></pre>
+<p><strong>Itab:</strong></p>
 <p>类似于虚函数表，该表不会被GC回收，其中：</p>
 <ul>
 <li>inter: 指向具体的 interface 类型</li>
@@ -125,58 +164,81 @@ package main import &#34;fmt&#34; type A struct { } func main() { var a *A = nil
 <li>unsued: &lt;略></li>
 <li>fun: 函数列表，每个元素是一个指向具体函数实现的指针</li>
 </ul>
-<div class=highlight><pre tabindex=0 style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-c data-lang=c><span style=color:#66d9ef>struct</span>  Itab
+<pre><code class=language-c>struct  Itab
 {
-    InterfaceType<span style=color:#f92672>*</span>  inter;
-    Type<span style=color:#f92672>*</span>   type;
-    Itab<span style=color:#f92672>*</span>   link;
+    InterfaceType*  inter;
+    Type*   type;
+    Itab*   link;
     int32   bad;
     int32   unused;
-    <span style=color:#66d9ef>void</span>    (<span style=color:#f92672>*</span>fun[])(<span style=color:#66d9ef>void</span>);
+    void    (*fun[])(void);
 };
-</code></pre></div><p><strong>Iface:</strong></p>
+</code></pre>
+<p><strong>Iface:</strong></p>
 <p>该类型为一般的 <code>interface</code> 类型所对应的数据结构，其中：</p>
 <ul>
 <li>tab: 参见 <code>Itab</code> 的说明，尤其是 <code>Itab::link</code></li>
 <li>data: 指向具体数据（比如指向struct，当然，如果一个数据不超过一个字长，那么这个data就可以直接存放，不需要指针再做以及跳转）</li>
 </ul>
-<div class=highlight><pre tabindex=0 style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-c data-lang=c><span style=color:#66d9ef>struct</span> Iface
+<pre><code class=language-c>struct Iface
 {
-    Itab<span style=color:#f92672>*</span>   tab;
-    <span style=color:#66d9ef>void</span><span style=color:#f92672>*</span>   data;
+    Itab*   tab;
+    void*   data;
 };
-</code></pre></div><p><strong>Eface:</strong></p>
+</code></pre>
+<p><strong>Eface:</strong></p>
 <p>该类型为 <code>interface{}</code> (empty interface) 所对应的数据结构，其中：</p>
 <ul>
 <li>type: 具体实现类型, 也即 receiver type</li>
 <li>data: 同 <code>Iface</code></li>
 </ul>
-<div class=highlight><pre tabindex=0 style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-c data-lang=c><span style=color:#66d9ef>struct</span> Eface
+<pre><code class=language-c>struct Eface
 {
-    Type<span style=color:#f92672>*</span>   type;
-    <span style=color:#66d9ef>void</span><span style=color:#f92672>*</span>   data;
+    Type*   type;
+    void*   data;
 };
-</code></pre></div><p>他们的依赖关系如下图所示：</p>
+</code></pre>
+<p>他们的依赖关系如下图所示：</p>
 <p><img src=https://theo-im-1255089908.cos.ap-chengdu.myqcloud.com/images/graph/20140808-interface-deps.png alt></p>
 <p>先到这里，下一篇将会举例子说明给一个 <code>interface{}</code> 类型的变量赋值后，其具体的内存结构是怎么样的。</p>
 <p>打了几个小时，真费时间，争取这个系列不坑 (逃</p>
-</section>
-<div class=post-tags>
-<nav class="nav tags">
-<ul class=tags>
-<li><a href=/tags/go>Go</a></li>
-<li><a href=/tags/golang>Golang</a></li>
-</ul>
-</nav>
 </div>
-</article>
+<div class=my-4>
+<a href=https://theo.im/tags/go/ class="inline-block bg-tertiary-bg text-sm rounded px-3 py-1 my-1 mr-2 hover:text-eureka">#Go</a>
+<a href=https://theo.im/tags/golang/ class="inline-block bg-tertiary-bg text-sm rounded px-3 py-1 my-1 mr-2 hover:text-eureka">#Golang</a>
+</div>
+<div class="flex flex-col md:flex-row md:justify-between -mx-2 mt-4 px-2 pt-4 border-t">
+<div>
+<span class="block font-bold">Previous</span>
+<a href=https://theo.im/blog/2014/08/13/count-text-element-count-in-python/ class=block>在 Python 中统计文本字符个数</a>
+</div>
+<div class="md:text-right mt-4 md:mt-0">
+<span class="block font-bold">Next</span>
+<a href=https://theo.im/blog/2014/07/21/printing-stacktrace-in-go/ class=block>在 Go 中获取 stacktrace</a>
+</div>
+</div>
+<div id=disqus_thread></div>
+<script>var disqus_config=function(){};(function(){if(["localhost","127.0.0.1"].indexOf(window.location.hostname)!=-1){document.getElementById('disqus_thread').innerHTML='Disqus comments not available by default when the website is previewed locally.';return}var b=document,a=b.createElement('script');a.async=!0,a.src='//theoim.disqus.com/embed.js',a.setAttribute('data-timestamp',+new Date),(b.head||b.body).appendChild(a)})()</script>
+<noscript>Please enable JavaScript to view the <a href=https://disqus.com/?ref_noscript>comments powered by Disqus.</a></noscript>
+<a href=https://disqus.com class=dsq-brlink>comments powered by <span class=logo-disqus>Disqus</span></a>
+</div>
+<div class="col-span-2 lg:col-start-2 lg:col-span-6 bg-secondary-bg rounded p-6">
+<h2 class="text-lg font-semibold mb-4">See Also</h2>
+<div class=content>
+<a href=https://theo.im/blog/2014/07/21/printing-stacktrace-in-go/>在 Go 中获取 stacktrace</a>
+<br>
+</div>
+</div>
+</div>
+<script>document.addEventListener('DOMContentLoaded',()=>{hljs.initHighlightingOnLoad()})</script>
+</div>
+</div>
 </main>
-<footer>
-<hr><a class=soc href=https://github.com/timonwong title=GitHub><i data-feather=github></i></a>|⚡️
-2021 © timonwong | <a href=https://github.com/athul/archie>Archie Theme</a> | Built with <a href=https://gohugo.io>Hugo</a>
+<footer class=pl-scrollbar>
+<div class="w-full max-w-screen-xl mx-auto"><div class="text-center p-6 pin-b">
+<p class="text-sm text-tertiary-text">&copy; 2021 timonwong
+&#183; Powered by the <a href=https://github.com/wangchucheng/hugo-eureka class=hover:text-eureka>Eureka</a> theme for <a href=https://gohugo.io class=hover:text-eureka>Hugo</a></p>
+</div></div>
 </footer>
-<script type=application/javascript>var doNotTrack=!1;doNotTrack||(window.ga=window.ga||function(){(ga.q=ga.q||[]).push(arguments)},ga.l=+new Date,ga('create','UA-35644871-2','auto'),ga('send','pageview'))</script>
-<script async src=https://www.google-analytics.com/analytics.js></script>
-<script>feather.replace()</script></div>
 </body>
 </html>

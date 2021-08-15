@@ -1,60 +1,90 @@
-<!doctype html><html><head>
-<meta charset=utf-8>
-<meta http-equiv=x-ua-compatible content="IE=edge"><title>试用最新的 Docker for Mac Beta - Timon Wong</title><meta name=viewport content="width=device-width,initial-scale=1">
-<meta name=description content="DEPRECATION: 现在 Docker for Mac 已经可以通过界面配置 mirror 了，这片文章作废
-如何申请 Docker for Mac Beta 请访问这个地址申请，可能需要等几天：https://beta.docker.com/
-Docker for Mac Beta，最大的好处就是不再依赖 VirtualBox VM 了，而是使用了更轻量化的 xhyve 作为其虚拟化方案（也即是说，仍然不是原生的，还是需要虚拟化一个 Linux 出来在上面运行 Docker Daemon）。
-另外，这个版本的 Docker for Mac 使用了 Alpine Linux 发行版，作为一个更轻量化的发行版，与一般的发行版有不少区别，比如，使用 ash 替换 bash 等，具体请访问 Alpine Linux 网站获取更多信息。
-使用 Docker Hub Registry Mirror 由于众所周知的原因，在国内访问 Docker Hub 的速度相当缓慢，因此需要设置一个 Docker Registry Mirror 来加速，这里使用 USTC 的 Docker Hub Mirror。
-就如同之前所说，Alpine Linux 发行版与一般发行版有巨大区别，因此调整 Docker Daemon 的启动参数也不大一样😂
-Quick Way NOTE: 安装了 jq 命令行工具（可以通过 brew install jq 安装），可以直接执行一行命令行搞定，否则请参阅「Slow Way」一节：">
-<meta property="og:image" content>
-<meta property="og:title" content="试用最新的 Docker for Mac Beta">
-<meta property="og:description" content="DEPRECATION: 现在 Docker for Mac 已经可以通过界面配置 mirror 了，这片文章作废
-如何申请 Docker for Mac Beta 请访问这个地址申请，可能需要等几天：https://beta.docker.com/
-Docker for Mac Beta，最大的好处就是不再依赖 VirtualBox VM 了，而是使用了更轻量化的 xhyve 作为其虚拟化方案（也即是说，仍然不是原生的，还是需要虚拟化一个 Linux 出来在上面运行 Docker Daemon）。
-另外，这个版本的 Docker for Mac 使用了 Alpine Linux 发行版，作为一个更轻量化的发行版，与一般的发行版有不少区别，比如，使用 ash 替换 bash 等，具体请访问 Alpine Linux 网站获取更多信息。
-使用 Docker Hub Registry Mirror 由于众所周知的原因，在国内访问 Docker Hub 的速度相当缓慢，因此需要设置一个 Docker Registry Mirror 来加速，这里使用 USTC 的 Docker Hub Mirror。
-就如同之前所说，Alpine Linux 发行版与一般发行版有巨大区别，因此调整 Docker Daemon 的启动参数也不大一样😂
-Quick Way NOTE: 安装了 jq 命令行工具（可以通过 brew install jq 安装），可以直接执行一行命令行搞定，否则请参阅「Slow Way」一节：">
+<!doctype html><html lang=en><meta charset=utf-8>
+<meta name=viewport content="width=device-width">
+<title>试用最新的 Docker for Mac Beta | timonwong</title>
+<meta name=generator content="Hugo Eureka 0.8.2">
+<link rel=stylesheet href=https://theo.im/css/eureka.min.css>
+<script defer src=https://theo.im/js/eureka.min.js></script>
+<link rel=preconnect href=https://fonts.gstatic.com crossorigin>
+<link rel=preload href="https://fonts.googleapis.com/css2?family=Lora:wght@400;600;700&family=Noto+Serif+SC:wght@400;600;700&display=swap" as=style onload="this.onload=null,this.rel='stylesheet'">
+<link rel=stylesheet href=https://cdn.jsdelivr.net/gh/highlightjs/cdn-release@10.1.0/build/styles/solarized-light.min.css media=print onload="this.media='all',this.onload=null" crossorigin>
+<script defer src=https://cdn.jsdelivr.net/gh/highlightjs/cdn-release@10.1.0/build/highlight.min.js crossorigin></script>
+<script defer src=https://cdn.jsdelivr.net/gh/highlightjs/cdn-release@10.1.0/build/languages/dart.min.js crossorigin></script>
+<script defer src=https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@5.14.0/js/all.min.js integrity="sha256-uNYoXefWRqv+PsIF/OflNmwtKM4lStn9yrz2gVl6ymo=" crossorigin></script>
+<link rel=stylesheet href=https://cdn.jsdelivr.net/npm/katex@0.12.0/dist/katex.min.css integrity=sha384-AfEj0r4/OFrOo5t7NnNe46zW/tFgW6x/bCJG8FqQCEo3+Aro6EYUG4+cU+KJWu/X media=print onload="this.media='all',this.onload=null" crossorigin>
+<script defer src=https://cdn.jsdelivr.net/npm/katex@0.12.0/dist/katex.min.js integrity=sha384-g7c+Jr9ZivxKLnZTDUhnkOnsh30B4H0rpLUpJ4jAIKs4fnJI+sEnkvrMWph2EDg4 crossorigin></script>
+<script defer src=https://cdn.jsdelivr.net/npm/katex@0.12.0/dist/contrib/auto-render.min.js integrity=sha384-mll67QQFJfxn0IYznZYonOWZ644AWYC+Pt2cHqMaRhXVrursRwvLnLaebdGIlYNa crossorigin></script>
+<script>document.addEventListener("DOMContentLoaded",function(){renderMathInElement(document.body,{delimiters:[{left:"$$",right:"$$",display:!0},{left:"$",right:"$",display:!1},{left:"\\(",right:"\\)",display:!1},{left:"\\[",right:"\\]",display:!0}]})})</script>
+<script defer src=https://cdn.jsdelivr.net/npm/mermaid@8.9.2/dist/mermaid.min.js integrity="sha256-Zmpaaj+GXFsPF5WdPArSrnW3b30dovldeKsW00xBVwE=" crossorigin></script>
+<link rel=preconnect href=https://www.google-analytics.com crossorigin>
+<script async src="https://www.googletagmanager.com/gtag/js?id=UA-35644871-2"></script>
+<script>window.dataLayer=window.dataLayer||[];function gtag(){dataLayer.push(arguments)}gtag('js',new Date),gtag('config','UA-35644871-2')</script>
+<link rel=icon type=image/png sizes=32x32 href=https://theo.im/images/icon_hu64421c6c7700f606f0ad45d807017b09_5843_32x32_fill_box_center_3.png>
+<link rel=apple-touch-icon sizes=180x180 href=https://theo.im/images/icon_hu64421c6c7700f606f0ad45d807017b09_5843_180x180_fill_box_center_3.png>
+<meta name=description content="DEPRECATION: 现在 Docker for Mac 已经可以通过界面配置 mirror 了，这片文章作废 如何申请 Docker for Mac Beta 请访问这个地址申请，可能需要等几天：https://beta.docker.com/">
+<script type=application/ld+json>{"@context":"https://schema.org","@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","position":1,"name":"Posts","item":"https://theo.im/posts/"},{"@type":"ListItem","position":2,"name":"试用最新的 Docker for Mac Beta","item":"https://theo.im/blog/2016/05/22/evaluating-new-docker-for-mac-beta/"}]}</script>
+<script type=application/ld+json>{"@context":"https://schema.org","@type":"Article","mainEntityOfPage":{"@type":"WebPage","@id":"https://theo.im/blog/2016/05/22/evaluating-new-docker-for-mac-beta/"},"headline":"试用最新的 Docker for Mac Beta | timonwong","datePublished":"2016-05-22T21:47:02+00:00","dateModified":"2016-05-22T21:47:02+00:00","wordCount":939,"publisher":{"@type":"Person","name":"timonwong","logo":{"@type":"ImageObject","url":"https://theo.im/images/icon.png"}},"description":"DEPRECATION: 现在 Docker for Mac 已经可以通过界面配置 mirror 了，这片文章作废 如何申请 Docker for Mac Beta 请访问这个地址申请，可能需要等几天：https:\/\/beta.docker.com\/"}</script><meta property="og:title" content="试用最新的 Docker for Mac Beta | timonwong">
 <meta property="og:type" content="article">
-<meta property="og:url" content="https://theo.im/blog/2016/05/22/evaluating-new-docker-for-mac-beta/"><meta property="article:section" content="posts">
+<meta property="og:image" content="https://theo.im/images/icon.png">
+<meta property="og:url" content="https://theo.im/blog/2016/05/22/evaluating-new-docker-for-mac-beta/">
+<meta property="og:description" content="DEPRECATION: 现在 Docker for Mac 已经可以通过界面配置 mirror 了，这片文章作废 如何申请 Docker for Mac Beta 请访问这个地址申请，可能需要等几天：https://beta.docker.com/">
+<meta property="og:locale" content="en">
+<meta property="og:site_name" content="timonwong">
 <meta property="article:published_time" content="2016-05-22T21:47:02+00:00">
 <meta property="article:modified_time" content="2016-05-22T21:47:02+00:00">
-<meta name=twitter:card content="summary">
-<meta name=twitter:title content="试用最新的 Docker for Mac Beta">
-<meta name=twitter:description content="DEPRECATION: 现在 Docker for Mac 已经可以通过界面配置 mirror 了，这片文章作废
-如何申请 Docker for Mac Beta 请访问这个地址申请，可能需要等几天：https://beta.docker.com/
-Docker for Mac Beta，最大的好处就是不再依赖 VirtualBox VM 了，而是使用了更轻量化的 xhyve 作为其虚拟化方案（也即是说，仍然不是原生的，还是需要虚拟化一个 Linux 出来在上面运行 Docker Daemon）。
-另外，这个版本的 Docker for Mac 使用了 Alpine Linux 发行版，作为一个更轻量化的发行版，与一般的发行版有不少区别，比如，使用 ash 替换 bash 等，具体请访问 Alpine Linux 网站获取更多信息。
-使用 Docker Hub Registry Mirror 由于众所周知的原因，在国内访问 Docker Hub 的速度相当缓慢，因此需要设置一个 Docker Registry Mirror 来加速，这里使用 USTC 的 Docker Hub Mirror。
-就如同之前所说，Alpine Linux 发行版与一般发行版有巨大区别，因此调整 Docker Daemon 的启动参数也不大一样😂
-Quick Way NOTE: 安装了 jq 命令行工具（可以通过 brew install jq 安装），可以直接执行一行命令行搞定，否则请参阅「Slow Way」一节：">
-<script src=https://cdn.jsdelivr.net/npm/feather-icons/dist/feather.min.js></script>
-<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:ital,wght@1,500&display=swap" rel=stylesheet>
-<link href="https://fonts.googleapis.com/css2?family=Fira+Sans&display=swap" rel=stylesheet>
-<link href="https://fonts.googleapis.com/css?family=Roboto+Mono" rel=stylesheet>
-<link rel=stylesheet type=text/css media=screen href=https://theo.im/css/main.2f9b5946627215dc1ae7fa5f82bfc9cfcab000329136befeea5733f21e77d68f.css>
-<link rel=stylesheet type=text/css href=https://theo.im/css/dark.726cd11ca6eb7c4f7d48eb420354f814e5c1b94281aaf8fd0511c1319f7f78a4.css media="(prefers-color-scheme: dark)">
-</head>
-<body>
-<div class=content><header>
-<div class=main>
-<a href=https://theo.im/>Timon Wong</a>
+<meta property="article:section" content="posts">
+<meta property="article:tag" content="Docker">
+<meta property="article:tag" content="OSX">
+<body class="flex flex-col min-h-screen">
+<header class="fixed flex items-center w-full min-h-16 pl-scrollbar z-50 bg-secondary-bg shadow-sm">
+<div class="w-full max-w-screen-xl mx-auto"><script>let storageColorScheme=localStorage.getItem("lightDarkMode");((storageColorScheme=='Auto'||storageColorScheme==null)&&window.matchMedia("(prefers-color-scheme: dark)").matches||storageColorScheme=="Dark")&&document.getElementsByTagName('html')[0].classList.add('dark')</script>
+<nav class="flex items-center justify-between flex-wrap px-4 py-4 md:py-0">
+<a href=/ class="mr-6 text-primary-text text-xl font-bold">timonwong</a>
+<button id=navbar-btn class="md:hidden flex items-center px-3 py-2" aria-label="Open Navbar">
+<i class="fas fa-bars"></i>
+</button>
+<div id=target class="hidden block md:flex md:flex-grow md:justify-between md:items-center w-full md:w-auto text-primary-text z-20">
+<div class="md:flex md:h-16 text-sm md:flex-grow pb-4 md:pb-0 border-b md:border-b-0">
+<a href=/posts/ class="block mt-4 md:inline-block md:mt-0 md:h-(16-4px) md:leading-(16-4px) box-border md:border-t-2 md:border-b-2 border-transparent mr-4">Posts</a>
+<a href=/tags/ class="block mt-4 md:inline-block md:mt-0 md:h-(16-4px) md:leading-(16-4px) box-border md:border-t-2 md:border-b-2 border-transparent mr-4">Tags</a>
 </div>
-<nav>
-<a href=/>Home</a>
-<a href=/posts>Posts</a>
-<a href=/tags>Tags</a>
+<div class=flex>
+<div class="relative pt-4 md:pt-0">
+<div class="cursor-pointer hover:text-eureka" id=lightDarkMode>
+<i class="fas fa-adjust"></i>
+</div>
+<div class="fixed hidden inset-0 opacity-0 h-full w-full cursor-default z-30" id=is-open>
+</div>
+<div class="absolute flex flex-col left-0 md:left-auto right-auto md:right-0 hidden bg-secondary-bg w-48 rounded py-2 border border-tertiary-bg cursor-pointer z-40" id=lightDarkOptions>
+<span class="px-4 py-1 hover:text-eureka" name=Light>Light</span>
+<span class="px-4 py-1 hover:text-eureka" name=Dark>Dark</span>
+<span class="px-4 py-1 hover:text-eureka" name=Auto>Auto</span>
+</div>
+</div>
+</div>
+</div>
+<div class="fixed hidden inset-0 opacity-0 h-full w-full cursor-default z-0" id=is-open-mobile>
+</div>
 </nav>
-</header>
-<main>
-<article>
-<div class=title>
-<h1 class=title>试用最新的 Docker for Mac Beta</h1>
-<div class=meta>Posted on May 22, 2016</div>
+<script>let element=document.getElementById('lightDarkMode');storageColorScheme==null||storageColorScheme=='Auto'?document.addEventListener('DOMContentLoaded',()=>{window.matchMedia("(prefers-color-scheme: dark)").addEventListener('change',switchDarkMode)}):storageColorScheme=="Light"?(element.firstElementChild.classList.remove('fa-adjust'),element.firstElementChild.setAttribute("data-icon",'sun'),element.firstElementChild.classList.add('fa-sun')):storageColorScheme=="Dark"&&(element.firstElementChild.classList.remove('fa-adjust'),element.firstElementChild.setAttribute("data-icon",'moon'),element.firstElementChild.classList.add('fa-moon')),document.addEventListener('DOMContentLoaded',()=>{getcolorscheme(),switchBurger()})</script>
 </div>
-<section class=body>
+</header>
+<main class="flex-grow pt-16">
+<div class=pl-scrollbar>
+<div class="w-full max-w-screen-xl lg:px-4 xl:px-8 mx-auto">
+<div class="grid grid-cols-2 lg:grid-cols-8 gap-4 lg:pt-12">
+<div class="col-span-2 lg:col-start-2 lg:col-span-6 bg-secondary-bg rounded px-6 py-8">
+<h1 class="font-bold text-3xl text-primary-text">试用最新的 Docker for Mac Beta</h1>
+<div class="flex flex-wrap flex-row items-center mt-2 text-tertiary-text">
+<div class="mr-6 my-2">
+<i class="fas fa-calendar mr-1"></i>
+<span>2016-05-22</span>
+</div>
+<div class="mr-6 my-2">
+<i class="fas fa-clock mr-1"></i>
+<span>2 min read</span>
+</div>
+</div>
+<div class=content>
 <p>DEPRECATION: 现在 Docker for Mac 已经可以通过界面配置 mirror 了，这片文章作废</p>
 <h2 id=如何申请-docker-for-mac-beta>如何申请 Docker for Mac Beta</h2>
 <p>请访问这个地址申请，可能需要等几天：https://beta.docker.com/</p>
@@ -65,22 +95,27 @@ Quick Way NOTE: 安装了 jq 命令行工具（可以通过 brew install jq 安�
 <p>就如同之前所说，<a href=http://alpinelinux.org/>Alpine Linux</a> 发行版与一般发行版有巨大区别，因此调整 Docker Daemon 的启动参数也不大一样😂</p>
 <h3 id=quick-way>Quick Way</h3>
 <p><strong>NOTE:</strong> 安装了 <code>jq</code> 命令行工具（可以通过 <code>brew install jq</code> 安装），可以直接执行一行命令行搞定，否则请参阅「Slow Way」一节：</p>
-<div class=highlight><pre tabindex=0 style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-bash data-lang=bash>pinata get daemon | jq -cM <span style=color:#e6db74>&#39;.&#34;registry-mirrors&#34; = [&#34;https://docker.mirrors.ustc.edu.cn&#34;]&#39;</span> | pinata set daemon -
-</code></pre></div><h3 id=slow-way>Slow Way</h3>
+<pre><code class=language-bash>pinata get daemon | jq -cM '.&quot;registry-mirrors&quot; = [&quot;https://docker.mirrors.ustc.edu.cn&quot;]' | pinata set daemon -
+</code></pre>
+<h3 id=slow-way>Slow Way</h3>
 <h4 id=1-导出当前的设置>1. 导出当前的设置</h4>
 <p>运行以下命令，将当前设置保存到 <code>docker-config.json</code> 文件中：</p>
-<div class=highlight><pre tabindex=0 style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-bash data-lang=bash>pinata get daemon &gt; docker-config.json
-<span style=color:#75715e>## &gt;&gt; {&#34;storage-driver&#34;:&#34;aufs&#34;,&#34;debug&#34;:true}</span>
-</code></pre></div><h4 id=2-使用文本编辑器编辑设置>2. 使用文本编辑器编辑设置</h4>
+<pre><code class=language-bash>pinata get daemon &gt; docker-config.json
+## &gt;&gt; {&quot;storage-driver&quot;:&quot;aufs&quot;,&quot;debug&quot;:true}
+</code></pre>
+<h4 id=2-使用文本编辑器编辑设置>2. 使用文本编辑器编辑设置</h4>
 <p>使用任何一种文本编辑器，打开 <code>docker-config.json</code> 并按照 <code>JSON</code> 格式编辑为以下内容，然后保存并退出：</p>
-<div class=highlight><pre tabindex=0 style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-json data-lang=json>{<span style=color:#f92672>&#34;storage-driver&#34;</span>:<span style=color:#e6db74>&#34;aufs&#34;</span>,<span style=color:#f92672>&#34;debug&#34;</span>:<span style=color:#66d9ef>true</span>,<span style=color:#f92672>&#34;registry-mirrors&#34;</span>:[<span style=color:#e6db74>&#34;https://docker.mirrors.ustc.edu.cn&#34;</span>]}
-</code></pre></div><h4 id=3-加载最新设置>3. 加载最新设置</h4>
+<pre><code class=language-json>{&quot;storage-driver&quot;:&quot;aufs&quot;,&quot;debug&quot;:true,&quot;registry-mirrors&quot;:[&quot;https://docker.mirrors.ustc.edu.cn&quot;]}
+</code></pre>
+<h4 id=3-加载最新设置>3. 加载最新设置</h4>
 <p>最后，加载 <code>docker-config.json</code> 中的设置就可以了：</p>
-<div class=highlight><pre tabindex=0 style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-json data-lang=json><span style=color:#960050;background-color:#1e0010>pinata</span> <span style=color:#960050;background-color:#1e0010>set</span> <span style=color:#960050;background-color:#1e0010>daemon</span> <span style=color:#960050;background-color:#1e0010>@docker-config.json</span>
-</code></pre></div><h2 id=获取-docker-guest-的-ip-地址>获取 Docker Guest 的 IP 地址</h2>
+<pre><code class=language-json>pinata set daemon @docker-config.json
+</code></pre>
+<h2 id=获取-docker-guest-的-ip-地址>获取 Docker Guest 的 IP 地址</h2>
 <p>有时候，我们需要得到 Docker Guest 的 IP 地址，其实不大有比较快捷的方法，比如，先运行 <code>pinata get network</code>，居然返回这个？？WTF？！</p>
-<div class=highlight><pre tabindex=0 style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-bash data-lang=bash>hostnet
-</code></pre></div><p>然后只有运行 <code>pinata list</code> 了：</p>
+<pre><code class=language-bash>hostnet
+</code></pre>
+<p>然后只有运行 <code>pinata list</code> 了：</p>
 <pre><code>These are advanced configuration settings to customise Docker.app on MacOSX.
 You can set them via pinata set &lt;key&gt; &lt;value&gt; &lt;options&gt;.
 
@@ -134,23 +169,36 @@ You can set them via pinata set &lt;key&gt; &lt;value&gt; &lt;options&gt;.
 <pre><code>*  network = hostnet (docker-ipv4=192.168.65.2, host-ipv4=192.168.65.1)
 </code></pre>
 <p>以上</p>
-</section>
-<div class=post-tags>
-<nav class="nav tags">
-<ul class=tags>
-<li><a href=/tags/docker>Docker</a></li>
-<li><a href=/tags/osx>OSX</a></li>
-</ul>
-</nav>
 </div>
-</article>
+<div class=my-4>
+<a href=https://theo.im/tags/docker/ class="inline-block bg-tertiary-bg text-sm rounded px-3 py-1 my-1 mr-2 hover:text-eureka">#Docker</a>
+<a href=https://theo.im/tags/osx/ class="inline-block bg-tertiary-bg text-sm rounded px-3 py-1 my-1 mr-2 hover:text-eureka">#OSX</a>
+</div>
+<div class="flex flex-col md:flex-row md:justify-between -mx-2 mt-4 px-2 pt-4 border-t">
+<div>
+<span class="block font-bold">Previous</span>
+<a href=https://theo.im/blog/2017/10/14/suspicious-502-error-from-elb/ class=block>解决 AWS ELB 偶发的 502 Bad Gateway 错误</a>
+</div>
+<div class="md:text-right mt-4 md:mt-0">
+<span class="block font-bold">Next</span>
+<a href=https://theo.im/blog/2014/08/13/count-text-element-count-in-python/ class=block>在 Python 中统计文本字符个数</a>
+</div>
+</div>
+<div id=disqus_thread></div>
+<script>var disqus_config=function(){};(function(){if(["localhost","127.0.0.1"].indexOf(window.location.hostname)!=-1){document.getElementById('disqus_thread').innerHTML='Disqus comments not available by default when the website is previewed locally.';return}var b=document,a=b.createElement('script');a.async=!0,a.src='//theoim.disqus.com/embed.js',a.setAttribute('data-timestamp',+new Date),(b.head||b.body).appendChild(a)})()</script>
+<noscript>Please enable JavaScript to view the <a href=https://disqus.com/?ref_noscript>comments powered by Disqus.</a></noscript>
+<a href=https://disqus.com class=dsq-brlink>comments powered by <span class=logo-disqus>Disqus</span></a>
+</div>
+</div>
+<script>document.addEventListener('DOMContentLoaded',()=>{hljs.initHighlightingOnLoad()})</script>
+</div>
+</div>
 </main>
-<footer>
-<hr><a class=soc href=https://github.com/timonwong title=GitHub><i data-feather=github></i></a>|⚡️
-2021 © timonwong | <a href=https://github.com/athul/archie>Archie Theme</a> | Built with <a href=https://gohugo.io>Hugo</a>
+<footer class=pl-scrollbar>
+<div class="w-full max-w-screen-xl mx-auto"><div class="text-center p-6 pin-b">
+<p class="text-sm text-tertiary-text">&copy; 2021 timonwong
+&#183; Powered by the <a href=https://github.com/wangchucheng/hugo-eureka class=hover:text-eureka>Eureka</a> theme for <a href=https://gohugo.io class=hover:text-eureka>Hugo</a></p>
+</div></div>
 </footer>
-<script type=application/javascript>var doNotTrack=!1;doNotTrack||(window.ga=window.ga||function(){(ga.q=ga.q||[]).push(arguments)},ga.l=+new Date,ga('create','UA-35644871-2','auto'),ga('send','pageview'))</script>
-<script async src=https://www.google-analytics.com/analytics.js></script>
-<script>feather.replace()</script></div>
 </body>
 </html>
