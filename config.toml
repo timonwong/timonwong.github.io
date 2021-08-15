@@ -10,6 +10,8 @@ pygmentsstyle = "monokai"
 pygmentscodefences = true
 pygmentscodefencesguesssyntax = true
 
+disqusShortname = 'theoim'
+
 [frontmatter]
 date = [":filename", ":default"]
 
