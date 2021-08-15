@@ -15,11 +15,9 @@ tags: [GitHub, DNS]
 curl -I http://theo.im/sitemap.xml
 ```
 
-发现得到的是302转向，不符合Sitemap协议的要求：
+发现得到的是302转向，不符合[Sitemap协议](https://www.sitemaps.org/protocol.html)的要求：
 
-{% blockquote sitemaps.org http://www.sitemaps.org/protocol.html Sitemaps Protocol %}
-A successful request will return an HTTP 200 response code; if you receive a different response, you should resubmit your request. The HTTP 200 response code only indicates that the search engine has received your Sitemap, not that the Sitemap itself or the URLs contained in it were valid.
-{% endblockquote %}
+> A successful request will return an HTTP 200 response code; if you receive a different response, you should resubmit your request. The HTTP 200 response code only indicates that the search engine has received your Sitemap, not that the Sitemap itself or the URLs contained in it were valid.
 
 [GitHub Pages文档]: https://help.github.com/articles/setting-up-a-custom-domain-with-github-pages
 
