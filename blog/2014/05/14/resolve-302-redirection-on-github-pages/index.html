@@ -22,7 +22,7 @@
 <link rel=apple-touch-icon sizes=180x180 href=https://theo.im/images/icon_hu64421c6c7700f606f0ad45d807017b09_5843_180x180_fill_box_center_3.png>
 <meta name=description content="起因 NOTE: 如果给GitHub Pages使用的是子域名，按照GitHub Pages文档配置，不会出现该问题。 由于我在GitHub Pages上的搭的博客使用了">
 <script type=application/ld+json>{"@context":"https://schema.org","@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","position":1,"name":"Posts","item":"https://theo.im/posts/"},{"@type":"ListItem","position":2,"name":"解决GitHub Pages的302转向问题","item":"https://theo.im/blog/2014/05/14/resolve-302-redirection-on-github-pages/"}]}</script>
-<script type=application/ld+json>{"@context":"https://schema.org","@type":"Article","mainEntityOfPage":{"@type":"WebPage","@id":"https://theo.im/blog/2014/05/14/resolve-302-redirection-on-github-pages/"},"headline":"解决GitHub Pages的302转向问题 | timonwong","datePublished":"2014-05-14T10:34:21+00:00","dateModified":"2014-05-14T10:34:21+00:00","wordCount":435,"publisher":{"@type":"Person","name":"timonwong","logo":{"@type":"ImageObject","url":"https://theo.im/images/icon.png"}},"description":"起因 NOTE: 如果给GitHub Pages使用的是子域名，按照GitHub Pages文档配置，不会出现该问题。 由于我在GitHub Pages上的搭的博客使用了"}</script><meta property="og:title" content="解决GitHub Pages的302转向问题 | timonwong">
+<script type=application/ld+json>{"@context":"https://schema.org","@type":"Article","mainEntityOfPage":{"@type":"WebPage","@id":"https://theo.im/blog/2014/05/14/resolve-302-redirection-on-github-pages/"},"headline":"解决GitHub Pages的302转向问题 | timonwong","datePublished":"2014-05-14T10:34:21+00:00","dateModified":"2014-05-14T10:34:21+00:00","wordCount":437,"publisher":{"@type":"Person","name":"timonwong","logo":{"@type":"ImageObject","url":"https://theo.im/images/icon.png"}},"description":"起因 NOTE: 如果给GitHub Pages使用的是子域名，按照GitHub Pages文档配置，不会出现该问题。 由于我在GitHub Pages上的搭的博客使用了"}</script><meta property="og:title" content="解决GitHub Pages的302转向问题 | timonwong">
 <meta property="og:type" content="article">
 <meta property="og:image" content="https://theo.im/images/icon.png">
 <meta property="og:url" content="https://theo.im/blog/2014/05/14/resolve-302-redirection-on-github-pages/">
@@ -91,9 +91,15 @@
 <a href=https://help.github.com/articles/setting-up-a-custom-domain-with-github-pages>GitHub Pages文档</a>上提供的信息，对<code>theo.im</code>设置了<strong>A记录</strong>，但是通过执行命令：</p>
 <pre><code class=language-bash>curl -I http://theo.im/sitemap.xml
 </code></pre>
-<p>发现得到的是302转向，不符合<a href=https://www.sitemaps.org/protocol.html>Sitemap协议</a>的要求：</p>
+<p>发现得到的是302转向，不符合Sitemap协议的要求：</p>
 <blockquote>
 <p>A successful request will return an HTTP 200 response code; if you receive a different response, you should resubmit your request. The HTTP 200 response code only indicates that the search engine has received your Sitemap, not that the Sitemap itself or the URLs contained in it were valid.</p>
+<footer>
+<strong></strong>
+<cite>
+<a href=https://www.sitemaps.org/protocol.html title=https://www.sitemaps.org/protocol.html>Sitemap Protocol</a>
+</cite>
+</footer>
 </blockquote>
 <h2 id=解决>解决</h2>
 <p>通过搜索，我发现需要使用<strong>ALIAS记录</strong>解析根域名，但是由于我之前使用的是<a href=http://dnspod.cn>DNSPod</a>
@@ -104,9 +110,9 @@
 <li><a href=https://pointhq.com/>PointDNS</a>: 有免费的开发者账户</li>
 </ol>
 <p>本着能用收费不用免费的原则，因此我选择了 <a href=https://dnsimple.com/>DNSimple</a> 来解析我的域名 (゜o゜(☆○=(-_-)</p>
-<p><img src=https://theo-im-1255089908.cos.ap-chengdu.myqcloud.com/images/github-pages-dns-buybuybuy.jpg alt></p>
+<p><img src=/images/github-pages-dns-buybuybuy.jpg alt></p>
 <p>OK，万文不如一图：</p>
-<p><img src=https://theo-im-1255089908.cos.ap-chengdu.myqcloud.com/images/github-pages-dns-setup.png alt></p>
+<p><img src=/images/github-pages-dns-setup.png alt></p>
 <p>最后，运行 <code>dig theo.im +nostats +nocomments +nocmd</code> 检查DNS是否生效：</p>
 <pre><code>; &lt;&lt;&gt;&gt; DiG 9.8.2rc1-RedHat-9.8.2-0.23.rc1.el6_5.1 &lt;&lt;&gt;&gt; theo.im +nostats +nocomments +nocmd
 ;; global options: +cmd

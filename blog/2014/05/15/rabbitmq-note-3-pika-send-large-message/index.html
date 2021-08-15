@@ -22,7 +22,7 @@
 <link rel=apple-touch-icon sizes=180x180 href=https://theo.im/images/icon_hu64421c6c7700f606f0ad45d807017b09_5843_180x180_fill_box_center_3.png>
 <meta name=description content="问题描述 这个问题存在很久了，现象就是使用 Pika 库的客户端在发送大尺寸消息后，RabbitMQ 没有收到，Consumer 那里会认为消息已丢失。 NOTE: 即使在本文写">
 <script type=application/ld+json>{"@context":"https://schema.org","@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","position":1,"name":"Posts","item":"https://theo.im/posts/"},{"@type":"ListItem","position":2,"name":"RabbitMQ笔记（三）: Pika客户端（Python）发送大尺寸消息的问题","item":"https://theo.im/blog/2014/05/15/rabbitmq-note-3-pika-send-large-message/"}]}</script>
-<script type=application/ld+json>{"@context":"https://schema.org","@type":"Article","mainEntityOfPage":{"@type":"WebPage","@id":"https://theo.im/blog/2014/05/15/rabbitmq-note-3-pika-send-large-message/"},"headline":"RabbitMQ笔记（三）: Pika客户端（Python）发送大尺寸消息的问题 | timonwong","datePublished":"2014-05-15T10:27:25+00:00","dateModified":"2014-05-15T10:27:25+00:00","wordCount":619,"publisher":{"@type":"Person","name":"timonwong","logo":{"@type":"ImageObject","url":"https://theo.im/images/icon.png"}},"description":"问题描述 这个问题存在很久了，现象就是使用 Pika 库的客户端在发送大尺寸消息后，RabbitMQ 没有收到，Consumer 那里会认为消息已丢失。 NOTE: 即使在本文写"}</script><meta property="og:title" content="RabbitMQ笔记（三）: Pika客户端（Python）发送大尺寸消息的问题 | timonwong">
+<script type=application/ld+json>{"@context":"https://schema.org","@type":"Article","mainEntityOfPage":{"@type":"WebPage","@id":"https://theo.im/blog/2014/05/15/rabbitmq-note-3-pika-send-large-message/"},"headline":"RabbitMQ笔记（三）: Pika客户端（Python）发送大尺寸消息的问题 | timonwong","datePublished":"2014-05-15T10:27:25+00:00","dateModified":"2014-05-15T10:27:25+00:00","wordCount":622,"publisher":{"@type":"Person","name":"timonwong","logo":{"@type":"ImageObject","url":"https://theo.im/images/icon.png"}},"description":"问题描述 这个问题存在很久了，现象就是使用 Pika 库的客户端在发送大尺寸消息后，RabbitMQ 没有收到，Consumer 那里会认为消息已丢失。 NOTE: 即使在本文写"}</script><meta property="og:title" content="RabbitMQ笔记（三）: Pika客户端（Python）发送大尺寸消息的问题 | timonwong">
 <meta property="og:type" content="article">
 <meta property="og:image" content="https://theo.im/images/icon.png">
 <meta property="og:url" content="https://theo.im/blog/2014/05/15/rabbitmq-note-3-pika-send-large-message/">
@@ -110,9 +110,15 @@
         return total_written
 </code></pre>
 <p>看出问题了吗？</p>
-<p>来看看<a href=https://docs.python.org/2/library/socket.html#socket.socket.send>socket.send</a>的文档吧：</p>
+<p>来看看<code>socket.send</code>的文档吧：</p>
 <blockquote>
 <p>Send data to the socket. The socket must be connected to a remote socket. The optional flags argument has the same meaning as for recv() above. Returns the number of bytes sent. Applications are responsible for checking that all data has been sent; if only some of the data was transmitted, the application needs to attempt delivery of the remaining data. For further information on this concept, consult the Socket Programming HOWTO.</p>
+<footer>
+<strong>Python Docs</strong>
+<cite>
+<a href=https://docs.python.org/2/library/socket.html#socket.socket.send title=https://docs.python.org/2/library/socket.html#socket.socket.send>socket.send</a>
+</cite>
+</footer>
 </blockquote>
 <p>问题就是，没有检查 <code>socket.send</code> 的返回值，由于 <code>socket.send</code> 返回实际发送的直接个数，可能会小于期望（在这里是
 <code>self.outbound_buffer.popleft()</code>）。</p>
