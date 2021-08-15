@@ -1,0 +1,129 @@
+<!doctype html><html><head>
+<meta charset=utf-8>
+<meta http-equiv=x-ua-compatible content="IE=edge"><title>使用 FPM 创建 Python 的 RPM 包 - Timon Wong</title><meta name=viewport content="width=device-width,initial-scale=1">
+<meta name=description content="生成 RPM 包太麻烦了，最近知道了一个名为 FPM 的神器，在此记录一下。
+安装 FPM NOTE: 测试系统为 RedHat 系的 CentOS 6.3，编译 Python 2.7.6 的 RPM 包。
+安装 Ruby 由于 FPM 使用 Ruby 写成，因此系统中需要安装 Ruby 的运行环境（这里 gem 的源改为了 taobao 的镜像）：
+# Install ruby dependencies yum -y install ruby rubygems ruby-devel # Use taobao repo for ruby gems gem sources -a http://ruby.taobao.org/ # Remove origin repo from ruby gems gem sources --remove http://rubygems.org/ 通过 Gem 安装 FPM 在 Ruby 安装完成后，就可以使用 gem 安装 FPM 了：">
+<meta property="og:image" content>
+<meta property="og:title" content="使用 FPM 创建 Python 的 RPM 包">
+<meta property="og:description" content="生成 RPM 包太麻烦了，最近知道了一个名为 FPM 的神器，在此记录一下。
+安装 FPM NOTE: 测试系统为 RedHat 系的 CentOS 6.3，编译 Python 2.7.6 的 RPM 包。
+安装 Ruby 由于 FPM 使用 Ruby 写成，因此系统中需要安装 Ruby 的运行环境（这里 gem 的源改为了 taobao 的镜像）：
+# Install ruby dependencies yum -y install ruby rubygems ruby-devel # Use taobao repo for ruby gems gem sources -a http://ruby.taobao.org/ # Remove origin repo from ruby gems gem sources --remove http://rubygems.org/ 通过 Gem 安装 FPM 在 Ruby 安装完成后，就可以使用 gem 安装 FPM 了：">
+<meta property="og:type" content="article">
+<meta property="og:url" content="https://theo.im/blog/2014/05/16/use-fpm-to-create-python-rpm-packages/"><meta property="article:section" content="posts">
+<meta property="article:published_time" content="2014-05-16T09:03:33+00:00">
+<meta property="article:modified_time" content="2014-05-16T09:03:33+00:00">
+<meta name=twitter:card content="summary">
+<meta name=twitter:title content="使用 FPM 创建 Python 的 RPM 包">
+<meta name=twitter:description content="生成 RPM 包太麻烦了，最近知道了一个名为 FPM 的神器，在此记录一下。
+安装 FPM NOTE: 测试系统为 RedHat 系的 CentOS 6.3，编译 Python 2.7.6 的 RPM 包。
+安装 Ruby 由于 FPM 使用 Ruby 写成，因此系统中需要安装 Ruby 的运行环境（这里 gem 的源改为了 taobao 的镜像）：
+# Install ruby dependencies yum -y install ruby rubygems ruby-devel # Use taobao repo for ruby gems gem sources -a http://ruby.taobao.org/ # Remove origin repo from ruby gems gem sources --remove http://rubygems.org/ 通过 Gem 安装 FPM 在 Ruby 安装完成后，就可以使用 gem 安装 FPM 了：">
+<script src=https://theo.im/js/feather.min.js></script>
+<link href=https://theo.im/css/fonts.b685ac6f654695232de7b82a9143a46f9e049c8e3af3a21d9737b01f4be211d1.css rel=stylesheet>
+<link rel=stylesheet type=text/css media=screen href=https://theo.im/css/main.2f9b5946627215dc1ae7fa5f82bfc9cfcab000329136befeea5733f21e77d68f.css>
+</head>
+<body>
+<div class=content><header>
+<div class=main>
+<a href=https://theo.im/>Timon Wong</a>
+</div>
+<nav>
+<a href=/>Home</a>
+<a href=/posts>Posts</a>
+<a href=/tags>Tags</a>
+</nav>
+</header>
+<main>
+<article>
+<div class=title>
+<h1 class=title>使用 FPM 创建 Python 的 RPM 包</h1>
+<div class=meta>Posted on May 16, 2014</div>
+</div>
+<section class=body>
+<p>生成 RPM 包太麻烦了，最近知道了一个名为 <a href=https://github.com/jordansissel/fpm>FPM</a> 的神器，在此记录一下。</p>
+<h2 id=安装-fpm>安装 FPM</h2>
+<p><strong>NOTE:</strong> 测试系统为 RedHat 系的 CentOS 6.3，编译 Python 2.7.6 的 RPM 包。</p>
+<h3 id=安装-ruby>安装 Ruby</h3>
+<p>由于 <a href=https://github.com/jordansissel/fpm>FPM</a> 使用 <code>Ruby</code> 写成，因此系统中需要安装 <code>Ruby</code> 的运行环境（这里 <code>gem</code> 的源改为了 taobao 的镜像）：</p>
+<div class=highlight><pre tabindex=0 style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-bash data-lang=bash><span style=color:#75715e># Install ruby dependencies</span>
+yum -y install ruby rubygems ruby-devel
+<span style=color:#75715e># Use taobao repo for ruby gems</span>
+gem sources -a http://ruby.taobao.org/
+<span style=color:#75715e># Remove origin repo from ruby gems</span>
+gem sources --remove http://rubygems.org/
+</code></pre></div><h3 id=通过-gem-安装-fpm>通过 Gem 安装 FPM</h3>
+<p>在 <code>Ruby</code> 安装完成后，就可以使用 <code>gem</code> 安装 <a href=https://github.com/jordansissel/fpm>FPM</a> 了：</p>
+<div class=highlight><pre tabindex=0 style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-bash data-lang=bash><span style=color:#75715e># Install fpm</span>
+gem install fpm
+</code></pre></div><p>Good.</p>
+<h2 id=设置编译环境>设置编译环境</h2>
+<p>在编译 Python 之前，需要安装开发工具和库:</p>
+<div class=highlight><pre tabindex=0 style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-bash data-lang=bash><span style=color:#75715e># Install EPEL repository</span>
+wget http://dl.fedoraproject.org/pub/epel/6/x86_64/epel-release-6-8.noarch.rpm
+wget http://rpms.famillecollet.com/enterprise/remi-release-6.rpm
+rpm -Uvh remi-release-6*.rpm epel-release-6*.rpm
+
+<span style=color:#75715e># Install build toolchain</span>
+yum -y groupinstall <span style=color:#e6db74>&#34;Development tools&#34;</span>
+yum -y install openssl-devel readline-devel bzip2-devel sqlite-devel zlib-devel ncurses-devel db4-devel expat-devel
+</code></pre></div><h2 id=编译并创建-python-的-rpm-包>编译并创建 Python 的 RPM 包</h2>
+<p><a href=https://github.com/jordansissel/fpm>FPM</a> 的使用比较简单，可以参考 <a href=https://github.com/jordansissel/fpm>FPM</a> 的 <a href=https://github.com/jordansissel/fpm/wiki>使用说明</a>。</p>
+<p>首先，下载 Python-2.7.6 的源码包并解压：</p>
+<div class=highlight><pre tabindex=0 style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-bash data-lang=bash>curl --progress-bar -LO http://mirrors.sohu.com/python/2.7.6/Python-2.7.6.tgz
+tar xf Python-2.7.6.tgz
+</code></pre></div><p>第二步，编译 Python-2.7.6</p>
+<div class=highlight><pre tabindex=0 style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-bash data-lang=bash>cd Python-2.7.6.tgz
+
+<span style=color:#75715e># Python2.7编译安装后会安装到这个目录，方便打包</span>
+export INTERMEDIATE_INSTALL_DIR<span style=color:#f92672>=</span>/tmp/installdir-Python-2.7.6
+<span style=color:#75715e># RPM包安装后Python2.7的目录</span>
+export INSTALL_DIR<span style=color:#f92672>=</span>/usr/local
+
+LDFLAGS<span style=color:#f92672>=</span><span style=color:#e6db74>&#34;-Wl,-rpath=</span><span style=color:#e6db74>${</span>INSTALL_DIR<span style=color:#e6db74>}</span><span style=color:#e6db74>/lib </span><span style=color:#e6db74>${</span>LDFLAGS<span style=color:#e6db74>}</span><span style=color:#e6db74>&#34;</span> <span style=color:#ae81ff>\
+</span><span style=color:#ae81ff></span>            ./configure --prefix<span style=color:#f92672>=</span><span style=color:#e6db74>${</span>INSTALL_DIR<span style=color:#e6db74>}</span> --enable-unicode<span style=color:#f92672>=</span>ucs4 <span style=color:#ae81ff>\
+</span><span style=color:#ae81ff></span>                --enable-shared --enable-ipv6
+make
+make install DESTDIR<span style=color:#f92672>=</span><span style=color:#e6db74>${</span>INTERMEDIATE_INSTALL_DIR<span style=color:#e6db74>}</span>
+</code></pre></div><p>第三步，使用 <a href=https://github.com/jordansissel/fpm>FPM</a> 创建 RPM 包：</p>
+<div class=highlight><pre tabindex=0 style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-bash data-lang=bash><span style=color:#75715e># 注意之前导出 INTERMEDIATE_INSTALL_DIR 和 INSTALL_DIR 这两个环境变量，这里还要使用</span>
+fpm -s dir -t -f rpm -n python27 -v <span style=color:#e6db74>&#39;2.7.6&#39;</span> <span style=color:#ae81ff>\
+</span><span style=color:#ae81ff></span>    -d <span style=color:#e6db74>&#39;openssl&#39;</span> <span style=color:#ae81ff>\
+</span><span style=color:#ae81ff></span>    -d <span style=color:#e6db74>&#39;bzip2&#39;</span> <span style=color:#ae81ff>\
+</span><span style=color:#ae81ff></span>    -d <span style=color:#e6db74>&#39;zlib&#39;</span> <span style=color:#ae81ff>\
+</span><span style=color:#ae81ff></span>    -d <span style=color:#e6db74>&#39;expat&#39;</span> <span style=color:#ae81ff>\
+</span><span style=color:#ae81ff></span>    -d <span style=color:#e6db74>&#39;db4&#39;</span> <span style=color:#ae81ff>\
+</span><span style=color:#ae81ff></span>    -d <span style=color:#e6db74>&#39;sqlite&#39;</span> <span style=color:#ae81ff>\
+</span><span style=color:#ae81ff></span>    -d <span style=color:#e6db74>&#39;ncurses&#39;</span> <span style=color:#ae81ff>\
+</span><span style=color:#ae81ff></span>    -d <span style=color:#e6db74>&#39;readline&#39;</span> <span style=color:#ae81ff>\
+</span><span style=color:#ae81ff></span>    --directories<span style=color:#f92672>=</span><span style=color:#e6db74>${</span>INSTALL_DIR<span style=color:#e6db74>}</span>/lib/python2.7/ <span style=color:#ae81ff>\
+</span><span style=color:#ae81ff></span>    --directories<span style=color:#f92672>=</span><span style=color:#e6db74>${</span>INSTALL_DIR<span style=color:#e6db74>}</span>/include/python2.7/ <span style=color:#ae81ff>\
+</span><span style=color:#ae81ff></span>    -C <span style=color:#e6db74>${</span>INTERMEDIATE_INSTALL_DIR<span style=color:#e6db74>}</span> .
+</code></pre></div><h2 id=bonus-time>Bonus Time</h2>
+<p>包含以下内容：</p>
+<ul>
+<li>自动下载、编译、打包 Python RPM 包的 Makefile；</li>
+<li>自动下载、编译、打包 virtualenv、pip、supervisor 等 Python 库和工具的 RPM 包。</li>
+</ul>
+<p>GitHub 项目地址：<a href=https://github.com/timonwong/python27-rpm>python27-rpm</a></p>
+</section>
+<div class=post-tags>
+<nav class="nav tags">
+<ul class=tags>
+<li><a href=/tags/fpm>FPM</a></li>
+<li><a href=/tags/rpm>RPM</a></li>
+<li><a href=/tags/python>Python</a></li>
+</ul>
+</nav>
+</div>
+</article>
+</main>
+<footer>
+<hr><a class=soc href=https://github.com/timonwong title=GitHub><i data-feather=github></i></a>|⚡️
+2021 © timonwong | <a href=https://github.com/athul/archie>Archie Theme</a> | Built with <a href=https://gohugo.io>Hugo</a>
+</footer>
+<script>feather.replace()</script></div>
+</body>
+</html>

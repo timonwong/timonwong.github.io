@@ -1,0 +1,74 @@
+<!doctype html><html><head>
+<meta charset=utf-8>
+<meta http-equiv=x-ua-compatible content="IE=edge"><title>Directory comparison for git difftool, with Beyond Compare 3 - Timon Wong</title><meta name=viewport content="width=device-width,initial-scale=1">
+<meta name=description content="For a long time, I didn&rsquo;t know a way to do directory comparison using git difftool command, extdiff extension from Mercurial did perform much more superior than Git.
+Though it may be a bit out of date, I just found that after v1.7.11, Git now supports directory comparison through --dir-diff option, fantastic!
+UPDATE 12/11/2012: You will need v1.8.0 version of msysgit installed, as noted by Scooter Software (Reference).
+So here is a list of steps for me to make Beyond Compare 3 and Git directory comparison work under Windows.">
+<meta property="og:image" content>
+<meta property="og:title" content="Directory comparison for git difftool, with Beyond Compare 3">
+<meta property="og:description" content="For a long time, I didn&rsquo;t know a way to do directory comparison using git difftool command, extdiff extension from Mercurial did perform much more superior than Git.
+Though it may be a bit out of date, I just found that after v1.7.11, Git now supports directory comparison through --dir-diff option, fantastic!
+UPDATE 12/11/2012: You will need v1.8.0 version of msysgit installed, as noted by Scooter Software (Reference).
+So here is a list of steps for me to make Beyond Compare 3 and Git directory comparison work under Windows.">
+<meta property="og:type" content="article">
+<meta property="og:url" content="https://theo.im/blog/2012/10/27/directory-comparison-for-git-difftool/"><meta property="article:section" content="posts">
+<meta name=twitter:card content="summary">
+<meta name=twitter:title content="Directory comparison for git difftool, with Beyond Compare 3">
+<meta name=twitter:description content="For a long time, I didn&rsquo;t know a way to do directory comparison using git difftool command, extdiff extension from Mercurial did perform much more superior than Git.
+Though it may be a bit out of date, I just found that after v1.7.11, Git now supports directory comparison through --dir-diff option, fantastic!
+UPDATE 12/11/2012: You will need v1.8.0 version of msysgit installed, as noted by Scooter Software (Reference).
+So here is a list of steps for me to make Beyond Compare 3 and Git directory comparison work under Windows.">
+<script src=https://theo.im/js/feather.min.js></script>
+<link href=https://theo.im/css/fonts.b685ac6f654695232de7b82a9143a46f9e049c8e3af3a21d9737b01f4be211d1.css rel=stylesheet>
+<link rel=stylesheet type=text/css media=screen href=https://theo.im/css/main.2f9b5946627215dc1ae7fa5f82bfc9cfcab000329136befeea5733f21e77d68f.css>
+</head>
+<body>
+<div class=content><header>
+<div class=main>
+<a href=https://theo.im/>Timon Wong</a>
+</div>
+<nav>
+<a href=/>Home</a>
+<a href=/posts>Posts</a>
+<a href=/tags>Tags</a>
+</nav>
+</header>
+<main>
+<article>
+<div class=title>
+<h1 class=title>Directory comparison for git difftool, with Beyond Compare 3</h1>
+<div class=meta>Posted on Oct 27, 2012</div>
+</div>
+<section class=body>
+<p>For a long time, I didn&rsquo;t know a way to do directory comparison using git difftool command, <a href=http://mercurial.selenic.com/wiki/ExtdiffExtension>extdiff extension</a> from Mercurial did perform much more superior than Git.</p>
+<p>Though it may be a bit out of date, I just found that after <code>v1.7.11</code>, Git now supports directory comparison through <code>--dir-diff</code> option, fantastic!</p>
+<p><strong>UPDATE 12/11/2012:</strong> You will need v1.8.0 version of <a href=http://code.google.com/p/msysgit/downloads/list>msysgit</a> installed, as noted by <strong>Scooter Software</strong> (<a href="http://www.scootersoftware.com/vbulletin/showthread.php?t=9449">Reference</a>).</p>
+<p>So here is a list of steps for me to make Beyond Compare 3 and Git directory comparison work under Windows.</p>
+<p>First of all, Execute following commands in the <code>Git Bash</code> shell (or just modify your .gitconfig directly). You may need to change the folder where <code>BCompare.exe</code> resides.</p>
+<div class=highlight><pre tabindex=0 style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-fallback data-lang=fallback>git config --global diff.tool bc3
+git config --global difftool.bc3.cmd &#34;\&#34;c:/Program Files/Beyond Compare 3/BCompare.exe\&#34; \&#34;$LOCAL\&#34; \&#34;$REMOTE\&#34;&#34;
+git config --global difftool.prompt false
+</code></pre></div><p><strong>NOTE:</strong> Instead of <code>bcomp.exe</code>, use <code>BCompare.exe</code>, because I&rsquo;ve found <code>bcomp.exe</code> returns too early, which will cause errors like this:</p>
+<div class=highlight><pre tabindex=0 style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-fallback data-lang=fallback>...Git/libexec/git-core\git-difftool line 444: Bad file number
+</code></pre></div><p>Then make an alias for difftool:</p>
+<div class=highlight><pre tabindex=0 style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-fallback data-lang=fallback>git config --global alias.dt &#34;difftool --dir-diff&#34;
+</code></pre></div><p>Now, you can use <code>git dt</code> to open Beyond Compare 3 for directory comparison in git repositories.</p>
+</section>
+<div class=post-tags>
+<nav class="nav tags">
+<ul class=tags>
+<li><a href=/tags/git>Git</a></li>
+<li><a href=/tags/beyond-compare-3>Beyond Compare 3</a></li>
+</ul>
+</nav>
+</div>
+</article>
+</main>
+<footer>
+<hr><a class=soc href=https://github.com/timonwong title=GitHub><i data-feather=github></i></a>|⚡️
+2021 © timonwong | <a href=https://github.com/athul/archie>Archie Theme</a> | Built with <a href=https://gohugo.io>Hugo</a>
+</footer>
+<script>feather.replace()</script></div>
+</body>
+</html>

@@ -1,0 +1,99 @@
+<!doctype html><html><head>
+<meta charset=utf-8>
+<meta http-equiv=x-ua-compatible content="IE=edge"><title>解决GitHub Pages的302转向问题 - Timon Wong</title><meta name=viewport content="width=device-width,initial-scale=1">
+<meta name=description content="起因 NOTE: 如果给GitHub Pages使用的是子域名，按照GitHub Pages文档配置，不会出现该问题。
+由于我在GitHub Pages上的搭的博客使用了theo.im这个根域名(Apex Domain)，在按照 GitHub Pages文档上提供的信息，对theo.im设置了A记录，但是通过执行命令：
+curl -I http://theo.im/sitemap.xml 发现得到的是302转向，不符合Sitemap协议的要求：
+ A successful request will return an HTTP 200 response code; if you receive a different response, you should resubmit your request. The HTTP 200 response code only indicates that the search engine has received your Sitemap, not that the Sitemap itself or the URLs contained in it were valid.
+ 解决 通过搜索，我发现需要使用ALIAS记录解析根域名，但是由于我之前使用的是DNSPod 的服务，不支持ALIAS记录，因此决定换加DNS域名解析商。
+经过一番搜寻，找到了两家支持ALIAS记录的DNS域名解析商：
+ DNSimple: 全收费服务 PointDNS: 有免费的开发者账户  本着能用收费不用免费的原则，因此我选择了 DNSimple 来解析我的域名 (゜o゜(☆○=(-_-)">
+<meta property="og:image" content>
+<meta property="og:title" content="解决GitHub Pages的302转向问题">
+<meta property="og:description" content="起因 NOTE: 如果给GitHub Pages使用的是子域名，按照GitHub Pages文档配置，不会出现该问题。
+由于我在GitHub Pages上的搭的博客使用了theo.im这个根域名(Apex Domain)，在按照 GitHub Pages文档上提供的信息，对theo.im设置了A记录，但是通过执行命令：
+curl -I http://theo.im/sitemap.xml 发现得到的是302转向，不符合Sitemap协议的要求：
+ A successful request will return an HTTP 200 response code; if you receive a different response, you should resubmit your request. The HTTP 200 response code only indicates that the search engine has received your Sitemap, not that the Sitemap itself or the URLs contained in it were valid.
+ 解决 通过搜索，我发现需要使用ALIAS记录解析根域名，但是由于我之前使用的是DNSPod 的服务，不支持ALIAS记录，因此决定换加DNS域名解析商。
+经过一番搜寻，找到了两家支持ALIAS记录的DNS域名解析商：
+ DNSimple: 全收费服务 PointDNS: 有免费的开发者账户  本着能用收费不用免费的原则，因此我选择了 DNSimple 来解析我的域名 (゜o゜(☆○=(-_-)">
+<meta property="og:type" content="article">
+<meta property="og:url" content="https://theo.im/blog/2014/05/14/resolve-302-redirection-on-github-pages/"><meta property="article:section" content="posts">
+<meta property="article:published_time" content="2014-05-14T10:34:21+00:00">
+<meta property="article:modified_time" content="2014-05-14T10:34:21+00:00">
+<meta name=twitter:card content="summary">
+<meta name=twitter:title content="解决GitHub Pages的302转向问题">
+<meta name=twitter:description content="起因 NOTE: 如果给GitHub Pages使用的是子域名，按照GitHub Pages文档配置，不会出现该问题。
+由于我在GitHub Pages上的搭的博客使用了theo.im这个根域名(Apex Domain)，在按照 GitHub Pages文档上提供的信息，对theo.im设置了A记录，但是通过执行命令：
+curl -I http://theo.im/sitemap.xml 发现得到的是302转向，不符合Sitemap协议的要求：
+ A successful request will return an HTTP 200 response code; if you receive a different response, you should resubmit your request. The HTTP 200 response code only indicates that the search engine has received your Sitemap, not that the Sitemap itself or the URLs contained in it were valid.
+ 解决 通过搜索，我发现需要使用ALIAS记录解析根域名，但是由于我之前使用的是DNSPod 的服务，不支持ALIAS记录，因此决定换加DNS域名解析商。
+经过一番搜寻，找到了两家支持ALIAS记录的DNS域名解析商：
+ DNSimple: 全收费服务 PointDNS: 有免费的开发者账户  本着能用收费不用免费的原则，因此我选择了 DNSimple 来解析我的域名 (゜o゜(☆○=(-_-)">
+<script src=https://theo.im/js/feather.min.js></script>
+<link href=https://theo.im/css/fonts.b685ac6f654695232de7b82a9143a46f9e049c8e3af3a21d9737b01f4be211d1.css rel=stylesheet>
+<link rel=stylesheet type=text/css media=screen href=https://theo.im/css/main.2f9b5946627215dc1ae7fa5f82bfc9cfcab000329136befeea5733f21e77d68f.css>
+</head>
+<body>
+<div class=content><header>
+<div class=main>
+<a href=https://theo.im/>Timon Wong</a>
+</div>
+<nav>
+<a href=/>Home</a>
+<a href=/posts>Posts</a>
+<a href=/tags>Tags</a>
+</nav>
+</header>
+<main>
+<article>
+<div class=title>
+<h1 class=title>解决GitHub Pages的302转向问题</h1>
+<div class=meta>Posted on May 14, 2014</div>
+</div>
+<section class=body>
+<h2 id=起因>起因</h2>
+<p><strong>NOTE:</strong> 如果给GitHub Pages使用的是子域名，按照<a href=https://help.github.com/articles/setting-up-a-custom-domain-with-github-pages>GitHub Pages文档</a>配置，不会出现该问题。</p>
+<p>由于我在GitHub Pages上的搭的博客使用了<code>theo.im</code>这个根域名(Apex Domain)，在按照
+<a href=https://help.github.com/articles/setting-up-a-custom-domain-with-github-pages>GitHub Pages文档</a>上提供的信息，对<code>theo.im</code>设置了<strong>A记录</strong>，但是通过执行命令：</p>
+<div class=highlight><pre tabindex=0 style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-bash data-lang=bash>curl -I http://theo.im/sitemap.xml
+</code></pre></div><p>发现得到的是302转向，不符合<a href=https://www.sitemaps.org/protocol.html>Sitemap协议</a>的要求：</p>
+<blockquote>
+<p>A successful request will return an HTTP 200 response code; if you receive a different response, you should resubmit your request. The HTTP 200 response code only indicates that the search engine has received your Sitemap, not that the Sitemap itself or the URLs contained in it were valid.</p>
+</blockquote>
+<h2 id=解决>解决</h2>
+<p>通过搜索，我发现需要使用<strong>ALIAS记录</strong>解析根域名，但是由于我之前使用的是<a href=http://dnspod.cn>DNSPod</a>
+的服务，不支持<strong>ALIAS记录</strong>，因此决定换加DNS域名解析商。</p>
+<p>经过一番搜寻，找到了两家支持<strong>ALIAS记录</strong>的DNS域名解析商：</p>
+<ol>
+<li><a href=https://dnsimple.com/>DNSimple</a>: 全收费服务</li>
+<li><a href=https://pointhq.com/>PointDNS</a>: 有免费的开发者账户</li>
+</ol>
+<p>本着能用收费不用免费的原则，因此我选择了 <a href=https://dnsimple.com/>DNSimple</a> 来解析我的域名 (゜o゜(☆○=(-_-)</p>
+<p><img src=https://theo-im-1255089908.cos.ap-chengdu.myqcloud.com/images/github-pages-dns-buybuybuy.jpg alt></p>
+<p>OK，万文不如一图：</p>
+<p><img src=https://theo-im-1255089908.cos.ap-chengdu.myqcloud.com/images/github-pages-dns-setup.png alt></p>
+<p>最后，运行 <code>dig theo.im +nostats +nocomments +nocmd</code> 检查DNS是否生效：</p>
+<div class=highlight><pre tabindex=0 style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-fallback data-lang=fallback>; &lt;&lt;&gt;&gt; DiG 9.8.2rc1-RedHat-9.8.2-0.23.rc1.el6_5.1 &lt;&lt;&gt;&gt; theo.im +nostats +nocomments +nocmd
+;; global options: +cmd
+;theo.im.           IN  A
+theo.im.        3600    IN  A   199.27.79.133
+</code></pre></div>
+</section>
+<div class=post-tags>
+<nav class="nav tags">
+<ul class=tags>
+<li><a href=/tags/github>GitHub</a></li>
+<li><a href=/tags/dns>DNS</a></li>
+</ul>
+</nav>
+</div>
+</article>
+</main>
+<footer>
+<hr><a class=soc href=https://github.com/timonwong title=GitHub><i data-feather=github></i></a>|⚡️
+2021 © timonwong | <a href=https://github.com/athul/archie>Archie Theme</a> | Built with <a href=https://gohugo.io>Hugo</a>
+</footer>
+<script>feather.replace()</script></div>
+</body>
+</html>

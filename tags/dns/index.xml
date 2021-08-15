@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?><rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom"><channel><title>DNS on Timon Wong</title><link>https://theo.im/tags/dns/</link><description>Recent content in DNS on Timon Wong</description><generator>Hugo -- gohugo.io</generator><language>zh-cn</language><copyright>© timonwong</copyright><lastBuildDate>Wed, 14 May 2014 00:00:00 +0000</lastBuildDate><atom:link href="https://theo.im/tags/dns/index.xml" rel="self" type="application/rss+xml"/><item><title>解决GitHub Pages的302转向问题</title><link>https://theo.im/blog/2014/05/14/resolve-302-redirection-on-github-pages/</link><pubDate>Wed, 14 May 2014 00:00:00 +0000</pubDate><guid>https://theo.im/blog/2014/05/14/resolve-302-redirection-on-github-pages/</guid><description>起因 NOTE: 如果给GitHub Pages使用的是子域名，按照GitHub Pages文档配置，不会出现该问题。
+由于我在GitHub Pages上的搭的博客使用了theo.im这个根域名(Apex Domain)，在按照 GitHub Pages文档上提供的信息，对theo.im设置了A记录，但是通过执行命令：
+curl -I http://theo.im/sitemap.xml 发现得到的是302转向，不符合Sitemap协议的要求：
+A successful request will return an HTTP 200 response code; if you receive a different response, you should resubmit your request. The HTTP 200 response code only indicates that the search engine has received your Sitemap, not that the Sitemap itself or the URLs contained in it were valid.
+解决 通过搜索，我发现需要使用ALIAS记录解析根域名，但是由于我之前使用的是DNSPod 的服务，不支持ALIAS记录，因此决定换加DNS域名解析商。
+经过一番搜寻，找到了两家支持ALIAS记录的DNS域名解析商：
+DNSimple: 全收费服务 PointDNS: 有免费的开发者账户 本着能用收费不用免费的原则，因此我选择了 DNSimple 来解析我的域名 (゜o゜(☆○=(-_-)</description></item></channel></rss>

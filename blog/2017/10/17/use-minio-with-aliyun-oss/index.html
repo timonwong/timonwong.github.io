@@ -1,0 +1,143 @@
+<!doctype html><html><head>
+<meta charset=utf-8>
+<meta http-equiv=x-ua-compatible content="IE=edge"><title>使用 Minio 为阿里云 OSS 提供 AWS S3 兼容 API - Timon Wong</title><meta name=viewport content="width=device-width,initial-scale=1">
+<meta name=description content="Summary
+不可否认，现在互联网的一个大「单点」就是对象存储 Amazon S3 了，大量的应用使用了 S3 的 API，这带来了一个问题，就是应用难于迁移。虽然改客户端这层这个方法，但毕竟侵入性太大，对于一个拥有众多服务的系统来说，实现的成本比较高。
+还有另外一种方案，就是提供一个 Gateway，提供与 S3 兼容的 API 供原来的客户端使用；中转请求后打入其它类型的对象存储中（本文为阿里云 OSS）。">
+<meta property="og:image" content>
+<meta property="og:title" content="使用 Minio 为阿里云 OSS 提供 AWS S3 兼容 API">
+<meta property="og:description" content="Summary
+不可否认，现在互联网的一个大「单点」就是对象存储 Amazon S3 了，大量的应用使用了 S3 的 API，这带来了一个问题，就是应用难于迁移。虽然改客户端这层这个方法，但毕竟侵入性太大，对于一个拥有众多服务的系统来说，实现的成本比较高。
+还有另外一种方案，就是提供一个 Gateway，提供与 S3 兼容的 API 供原来的客户端使用；中转请求后打入其它类型的对象存储中（本文为阿里云 OSS）。">
+<meta property="og:type" content="article">
+<meta property="og:url" content="https://theo.im/blog/2017/10/17/use-minio-with-aliyun-oss/"><meta property="article:section" content="posts">
+<meta property="article:published_time" content="2017-10-17T16:56:23+00:00">
+<meta property="article:modified_time" content="2017-10-17T16:56:23+00:00">
+<meta name=twitter:card content="summary">
+<meta name=twitter:title content="使用 Minio 为阿里云 OSS 提供 AWS S3 兼容 API">
+<meta name=twitter:description content="Summary
+不可否认，现在互联网的一个大「单点」就是对象存储 Amazon S3 了，大量的应用使用了 S3 的 API，这带来了一个问题，就是应用难于迁移。虽然改客户端这层这个方法，但毕竟侵入性太大，对于一个拥有众多服务的系统来说，实现的成本比较高。
+还有另外一种方案，就是提供一个 Gateway，提供与 S3 兼容的 API 供原来的客户端使用；中转请求后打入其它类型的对象存储中（本文为阿里云 OSS）。">
+<script src=https://theo.im/js/feather.min.js></script>
+<link href=https://theo.im/css/fonts.b685ac6f654695232de7b82a9143a46f9e049c8e3af3a21d9737b01f4be211d1.css rel=stylesheet>
+<link rel=stylesheet type=text/css media=screen href=https://theo.im/css/main.2f9b5946627215dc1ae7fa5f82bfc9cfcab000329136befeea5733f21e77d68f.css>
+</head>
+<body>
+<div class=content><header>
+<div class=main>
+<a href=https://theo.im/>Timon Wong</a>
+</div>
+<nav>
+<a href=/>Home</a>
+<a href=/posts>Posts</a>
+<a href=/tags>Tags</a>
+</nav>
+</header>
+<main>
+<article>
+<div class=title>
+<h1 class=title>使用 Minio 为阿里云 OSS 提供 AWS S3 兼容 API</h1>
+<div class=meta>Posted on Oct 17, 2017</div>
+</div>
+<section class=body>
+<h2 id=summary>Summary</h2>
+<p>不可否认，现在互联网的一个大「单点」就是对象存储 <a href=https://aws.amazon.com/s3>Amazon S3</a> 了，大量的应用使用了 S3 的 API，这带来了一个问题，就是应用难于迁移。虽然改客户端这层这个方法，但毕竟侵入性太大，对于一个拥有众多服务的系统来说，实现的成本比较高。</p>
+<p>还有另外一种方案，就是提供一个 Gateway，提供与 S3 兼容的 API 供原来的客户端使用；中转请求后打入其它类型的对象存储中（本文为阿里云 <a href=https://www.aliyun.com/product/oss>OSS</a>）。</p>
+<h2 id=minio><a href=https://www.minio.io>Minio</a></h2>
+<blockquote>
+<p><a href=https://www.minio.io>Minio</a> 是一个对象存储服务，基于 Apache License v2.0 协议。它完全兼容亚马逊的S3云储存服务，非常适合于存储很多非结构化的数据，例如图片、视频、日志文件、备份数据和容器/虚拟机镜像等，而一个对象文件可以是任意大小，从几 kb 到最大 5T 不等。</p>
+</blockquote>
+<p>为了快速实现原型，这里使用 <a href=https://www.minio.io>Minio</a> 为例，因为它提供了一套兼容 <a href=https://aws.amazon.com/s3>Amazon S3</a> 的 API，根据 <a href=https://www.minio.io>Minio</a> 内部的 Gateway 接口，我们是可以自己提供一个 Gateway 实现，用来转发到阿里云 <a href=https://www.aliyun.com/product/oss>OSS</a> 。</p>
+<p>注意，这里略过一些性能及功能方面的考量。</p>
+<h2 id=minio-gateway>Minio Gateway</h2>
+<p>翻阅源代码，Minio 已经具有下面几个 Gateway 实现：</p>
+<ul>
+<li><a href=https://github.com/minio/minio/blob/3d2d63f71e04404be70fda9653394915f4e7458a/cmd/gateway-s3.go>Amazon S3</a></li>
+<li><a href=https://github.com/minio/minio/blob/3d2d63f71e04404be70fda9653394915f4e7458a/cmd/gateway-gcs.go>Google Cloud Storage</a> 其实本质上是 AWS S3 兼容 API</li>
+<li><a href=https://github.com/minio/minio/blob/3d2d63f71e04404be70fda9653394915f4e7458a/cmd/gateway-azure.go>Azure Storage</a></li>
+<li><a href=https://github.com/minio/minio/blob/3d2d63f71e04404be70fda9653394915f4e7458a/cmd/gateway-b2.go>Backblaze B2</a></li>
+</ul>
+<p>以上 Gateway 的最终用户使用文档可以在这里看到: <a href=https://github.com/minio/minio/tree/3d2d63f71e04404be70fda9653394915f4e7458a/docs/gateway>https://github.com/minio/minio/tree/3d2d63f71e04404be70fda9653394915f4e7458a/docs/gateway</a></p>
+<h3 id=interface>Interface</h3>
+<p>一个 Gateway 需要实现 GatewayLayer 接口，如下所示:</p>
+<div class=highlight><pre tabindex=0 style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-go data-lang=go><span style=color:#75715e>// ObjectLayer implements primitives for object API layer.
+</span><span style=color:#75715e></span><span style=color:#66d9ef>type</span> <span style=color:#a6e22e>ObjectLayer</span> <span style=color:#66d9ef>interface</span> {
+    <span style=color:#75715e>// Storage operations.
+</span><span style=color:#75715e></span>    <span style=color:#a6e22e>Shutdown</span>() <span style=color:#66d9ef>error</span>
+    <span style=color:#a6e22e>StorageInfo</span>() <span style=color:#a6e22e>StorageInfo</span>
+
+    <span style=color:#75715e>// Bucket operations.
+</span><span style=color:#75715e></span>    <span style=color:#a6e22e>MakeBucketWithLocation</span>(<span style=color:#a6e22e>bucket</span> <span style=color:#66d9ef>string</span>, <span style=color:#a6e22e>location</span> <span style=color:#66d9ef>string</span>) <span style=color:#66d9ef>error</span>
+    <span style=color:#a6e22e>GetBucketInfo</span>(<span style=color:#a6e22e>bucket</span> <span style=color:#66d9ef>string</span>) (<span style=color:#a6e22e>bucketInfo</span> <span style=color:#a6e22e>BucketInfo</span>, <span style=color:#a6e22e>err</span> <span style=color:#66d9ef>error</span>)
+    <span style=color:#a6e22e>ListBuckets</span>() (<span style=color:#a6e22e>buckets</span> []<span style=color:#a6e22e>BucketInfo</span>, <span style=color:#a6e22e>err</span> <span style=color:#66d9ef>error</span>)
+    <span style=color:#a6e22e>DeleteBucket</span>(<span style=color:#a6e22e>bucket</span> <span style=color:#66d9ef>string</span>) <span style=color:#66d9ef>error</span>
+    <span style=color:#a6e22e>ListObjects</span>(<span style=color:#a6e22e>bucket</span>, <span style=color:#a6e22e>prefix</span>, <span style=color:#a6e22e>marker</span>, <span style=color:#a6e22e>delimiter</span> <span style=color:#66d9ef>string</span>, <span style=color:#a6e22e>maxKeys</span> <span style=color:#66d9ef>int</span>) (<span style=color:#a6e22e>result</span> <span style=color:#a6e22e>ListObjectsInfo</span>, <span style=color:#a6e22e>err</span> <span style=color:#66d9ef>error</span>)
+
+    <span style=color:#75715e>// Object operations.
+</span><span style=color:#75715e></span>    <span style=color:#a6e22e>GetObject</span>(<span style=color:#a6e22e>bucket</span>, <span style=color:#a6e22e>object</span> <span style=color:#66d9ef>string</span>, <span style=color:#a6e22e>startOffset</span> <span style=color:#66d9ef>int64</span>, <span style=color:#a6e22e>length</span> <span style=color:#66d9ef>int64</span>, <span style=color:#a6e22e>writer</span> <span style=color:#a6e22e>io</span>.<span style=color:#a6e22e>Writer</span>) (<span style=color:#a6e22e>err</span> <span style=color:#66d9ef>error</span>)
+    <span style=color:#a6e22e>GetObjectInfo</span>(<span style=color:#a6e22e>bucket</span>, <span style=color:#a6e22e>object</span> <span style=color:#66d9ef>string</span>) (<span style=color:#a6e22e>objInfo</span> <span style=color:#a6e22e>ObjectInfo</span>, <span style=color:#a6e22e>err</span> <span style=color:#66d9ef>error</span>)
+    <span style=color:#a6e22e>PutObject</span>(<span style=color:#a6e22e>bucket</span>, <span style=color:#a6e22e>object</span> <span style=color:#66d9ef>string</span>, <span style=color:#a6e22e>data</span> <span style=color:#f92672>*</span><span style=color:#a6e22e>HashReader</span>, <span style=color:#a6e22e>metadata</span> <span style=color:#66d9ef>map</span>[<span style=color:#66d9ef>string</span>]<span style=color:#66d9ef>string</span>) (<span style=color:#a6e22e>objInfo</span> <span style=color:#a6e22e>ObjectInfo</span>, <span style=color:#a6e22e>err</span> <span style=color:#66d9ef>error</span>)
+    <span style=color:#a6e22e>CopyObject</span>(<span style=color:#a6e22e>srcBucket</span>, <span style=color:#a6e22e>srcObject</span>, <span style=color:#a6e22e>destBucket</span>, <span style=color:#a6e22e>destObject</span> <span style=color:#66d9ef>string</span>, <span style=color:#a6e22e>metadata</span> <span style=color:#66d9ef>map</span>[<span style=color:#66d9ef>string</span>]<span style=color:#66d9ef>string</span>) (<span style=color:#a6e22e>objInfo</span> <span style=color:#a6e22e>ObjectInfo</span>, <span style=color:#a6e22e>err</span> <span style=color:#66d9ef>error</span>)
+    <span style=color:#a6e22e>DeleteObject</span>(<span style=color:#a6e22e>bucket</span>, <span style=color:#a6e22e>object</span> <span style=color:#66d9ef>string</span>) <span style=color:#66d9ef>error</span>
+
+    <span style=color:#75715e>// Multipart operations.
+</span><span style=color:#75715e></span>    <span style=color:#a6e22e>ListMultipartUploads</span>(<span style=color:#a6e22e>bucket</span>, <span style=color:#a6e22e>prefix</span>, <span style=color:#a6e22e>keyMarker</span>, <span style=color:#a6e22e>uploadIDMarker</span>, <span style=color:#a6e22e>delimiter</span> <span style=color:#66d9ef>string</span>, <span style=color:#a6e22e>maxUploads</span> <span style=color:#66d9ef>int</span>) (<span style=color:#a6e22e>result</span> <span style=color:#a6e22e>ListMultipartsInfo</span>, <span style=color:#a6e22e>err</span> <span style=color:#66d9ef>error</span>)
+    <span style=color:#a6e22e>NewMultipartUpload</span>(<span style=color:#a6e22e>bucket</span>, <span style=color:#a6e22e>object</span> <span style=color:#66d9ef>string</span>, <span style=color:#a6e22e>metadata</span> <span style=color:#66d9ef>map</span>[<span style=color:#66d9ef>string</span>]<span style=color:#66d9ef>string</span>) (<span style=color:#a6e22e>uploadID</span> <span style=color:#66d9ef>string</span>, <span style=color:#a6e22e>err</span> <span style=color:#66d9ef>error</span>)
+    <span style=color:#a6e22e>CopyObjectPart</span>(<span style=color:#a6e22e>srcBucket</span>, <span style=color:#a6e22e>srcObject</span>, <span style=color:#a6e22e>destBucket</span>, <span style=color:#a6e22e>destObject</span> <span style=color:#66d9ef>string</span>, <span style=color:#a6e22e>uploadID</span> <span style=color:#66d9ef>string</span>, <span style=color:#a6e22e>partID</span> <span style=color:#66d9ef>int</span>, <span style=color:#a6e22e>startOffset</span> <span style=color:#66d9ef>int64</span>, <span style=color:#a6e22e>length</span> <span style=color:#66d9ef>int64</span>) (<span style=color:#a6e22e>info</span> <span style=color:#a6e22e>PartInfo</span>, <span style=color:#a6e22e>err</span> <span style=color:#66d9ef>error</span>)
+    <span style=color:#a6e22e>PutObjectPart</span>(<span style=color:#a6e22e>bucket</span>, <span style=color:#a6e22e>object</span>, <span style=color:#a6e22e>uploadID</span> <span style=color:#66d9ef>string</span>, <span style=color:#a6e22e>partID</span> <span style=color:#66d9ef>int</span>, <span style=color:#a6e22e>data</span> <span style=color:#f92672>*</span><span style=color:#a6e22e>HashReader</span>) (<span style=color:#a6e22e>info</span> <span style=color:#a6e22e>PartInfo</span>, <span style=color:#a6e22e>err</span> <span style=color:#66d9ef>error</span>)
+    <span style=color:#a6e22e>ListObjectParts</span>(<span style=color:#a6e22e>bucket</span>, <span style=color:#a6e22e>object</span>, <span style=color:#a6e22e>uploadID</span> <span style=color:#66d9ef>string</span>, <span style=color:#a6e22e>partNumberMarker</span> <span style=color:#66d9ef>int</span>, <span style=color:#a6e22e>maxParts</span> <span style=color:#66d9ef>int</span>) (<span style=color:#a6e22e>result</span> <span style=color:#a6e22e>ListPartsInfo</span>, <span style=color:#a6e22e>err</span> <span style=color:#66d9ef>error</span>)
+    <span style=color:#a6e22e>AbortMultipartUpload</span>(<span style=color:#a6e22e>bucket</span>, <span style=color:#a6e22e>object</span>, <span style=color:#a6e22e>uploadID</span> <span style=color:#66d9ef>string</span>) <span style=color:#66d9ef>error</span>
+    <span style=color:#a6e22e>CompleteMultipartUpload</span>(<span style=color:#a6e22e>bucket</span>, <span style=color:#a6e22e>object</span>, <span style=color:#a6e22e>uploadID</span> <span style=color:#66d9ef>string</span>, <span style=color:#a6e22e>uploadedParts</span> []<span style=color:#a6e22e>completePart</span>) (<span style=color:#a6e22e>objInfo</span> <span style=color:#a6e22e>ObjectInfo</span>, <span style=color:#a6e22e>err</span> <span style=color:#66d9ef>error</span>)
+
+    <span style=color:#75715e>// Healing operations.
+</span><span style=color:#75715e></span>    <span style=color:#a6e22e>HealBucket</span>(<span style=color:#a6e22e>bucket</span> <span style=color:#66d9ef>string</span>) <span style=color:#66d9ef>error</span>
+    <span style=color:#a6e22e>ListBucketsHeal</span>() (<span style=color:#a6e22e>buckets</span> []<span style=color:#a6e22e>BucketInfo</span>, <span style=color:#a6e22e>err</span> <span style=color:#66d9ef>error</span>)
+    <span style=color:#a6e22e>HealObject</span>(<span style=color:#a6e22e>bucket</span>, <span style=color:#a6e22e>object</span> <span style=color:#66d9ef>string</span>) (<span style=color:#66d9ef>int</span>, <span style=color:#66d9ef>int</span>, <span style=color:#66d9ef>error</span>)
+    <span style=color:#a6e22e>ListObjectsHeal</span>(<span style=color:#a6e22e>bucket</span>, <span style=color:#a6e22e>prefix</span>, <span style=color:#a6e22e>marker</span>, <span style=color:#a6e22e>delimiter</span> <span style=color:#66d9ef>string</span>, <span style=color:#a6e22e>maxKeys</span> <span style=color:#66d9ef>int</span>) (<span style=color:#a6e22e>ListObjectsInfo</span>, <span style=color:#66d9ef>error</span>)
+    <span style=color:#a6e22e>ListUploadsHeal</span>(<span style=color:#a6e22e>bucket</span>, <span style=color:#a6e22e>prefix</span>, <span style=color:#a6e22e>marker</span>, <span style=color:#a6e22e>uploadIDMarker</span>,
+        <span style=color:#a6e22e>delimiter</span> <span style=color:#66d9ef>string</span>, <span style=color:#a6e22e>maxUploads</span> <span style=color:#66d9ef>int</span>) (<span style=color:#a6e22e>ListMultipartsInfo</span>, <span style=color:#66d9ef>error</span>)
+}
+
+<span style=color:#75715e>// GatewayLayer - Interface to implement gateway mode.
+</span><span style=color:#75715e></span><span style=color:#66d9ef>type</span> <span style=color:#a6e22e>GatewayLayer</span> <span style=color:#66d9ef>interface</span> {
+    <span style=color:#a6e22e>ObjectLayer</span>
+
+    <span style=color:#a6e22e>AnonGetObject</span>(<span style=color:#a6e22e>bucket</span>, <span style=color:#a6e22e>object</span> <span style=color:#66d9ef>string</span>, <span style=color:#a6e22e>startOffset</span> <span style=color:#66d9ef>int64</span>, <span style=color:#a6e22e>length</span> <span style=color:#66d9ef>int64</span>, <span style=color:#a6e22e>writer</span> <span style=color:#a6e22e>io</span>.<span style=color:#a6e22e>Writer</span>) (<span style=color:#a6e22e>err</span> <span style=color:#66d9ef>error</span>)
+    <span style=color:#a6e22e>AnonGetObjectInfo</span>(<span style=color:#a6e22e>bucket</span>, <span style=color:#a6e22e>object</span> <span style=color:#66d9ef>string</span>) (<span style=color:#a6e22e>objInfo</span> <span style=color:#a6e22e>ObjectInfo</span>, <span style=color:#a6e22e>err</span> <span style=color:#66d9ef>error</span>)
+
+    <span style=color:#a6e22e>AnonPutObject</span>(<span style=color:#a6e22e>bucket</span> <span style=color:#66d9ef>string</span>, <span style=color:#a6e22e>object</span> <span style=color:#66d9ef>string</span>, <span style=color:#a6e22e>size</span> <span style=color:#66d9ef>int64</span>, <span style=color:#a6e22e>data</span> <span style=color:#a6e22e>io</span>.<span style=color:#a6e22e>Reader</span>, <span style=color:#a6e22e>metadata</span> <span style=color:#66d9ef>map</span>[<span style=color:#66d9ef>string</span>]<span style=color:#66d9ef>string</span>, <span style=color:#a6e22e>sha256sum</span> <span style=color:#66d9ef>string</span>) (<span style=color:#a6e22e>ObjectInfo</span>, <span style=color:#66d9ef>error</span>)
+
+    <span style=color:#a6e22e>SetBucketPolicies</span>(<span style=color:#66d9ef>string</span>, <span style=color:#a6e22e>policy</span>.<span style=color:#a6e22e>BucketAccessPolicy</span>) <span style=color:#66d9ef>error</span>
+    <span style=color:#a6e22e>GetBucketPolicies</span>(<span style=color:#66d9ef>string</span>) (<span style=color:#a6e22e>policy</span>.<span style=color:#a6e22e>BucketAccessPolicy</span>, <span style=color:#66d9ef>error</span>)
+    <span style=color:#a6e22e>DeleteBucketPolicies</span>(<span style=color:#66d9ef>string</span>) <span style=color:#66d9ef>error</span>
+    <span style=color:#a6e22e>AnonListObjects</span>(<span style=color:#a6e22e>bucket</span>, <span style=color:#a6e22e>prefix</span>, <span style=color:#a6e22e>marker</span>, <span style=color:#a6e22e>delimiter</span> <span style=color:#66d9ef>string</span>, <span style=color:#a6e22e>maxKeys</span> <span style=color:#66d9ef>int</span>) (<span style=color:#a6e22e>result</span> <span style=color:#a6e22e>ListObjectsInfo</span>, <span style=color:#a6e22e>err</span> <span style=color:#66d9ef>error</span>)
+    <span style=color:#a6e22e>AnonListObjectsV2</span>(<span style=color:#a6e22e>bucket</span>, <span style=color:#a6e22e>prefix</span>, <span style=color:#a6e22e>continuationToken</span>, <span style=color:#a6e22e>delimiter</span> <span style=color:#66d9ef>string</span>, <span style=color:#a6e22e>maxKeys</span> <span style=color:#66d9ef>int</span>, <span style=color:#a6e22e>fetchOwner</span> <span style=color:#66d9ef>bool</span>, <span style=color:#a6e22e>startAfter</span> <span style=color:#66d9ef>string</span>) (<span style=color:#a6e22e>result</span> <span style=color:#a6e22e>ListObjectsV2Info</span>, <span style=color:#a6e22e>err</span> <span style=color:#66d9ef>error</span>)
+    <span style=color:#a6e22e>ListObjectsV2</span>(<span style=color:#a6e22e>bucket</span>, <span style=color:#a6e22e>prefix</span>, <span style=color:#a6e22e>continuationToken</span>, <span style=color:#a6e22e>delimiter</span> <span style=color:#66d9ef>string</span>, <span style=color:#a6e22e>maxKeys</span> <span style=color:#66d9ef>int</span>, <span style=color:#a6e22e>fetchOwner</span> <span style=color:#66d9ef>bool</span>, <span style=color:#a6e22e>startAfter</span> <span style=color:#66d9ef>string</span>) (<span style=color:#a6e22e>result</span> <span style=color:#a6e22e>ListObjectsV2Info</span>, <span style=color:#a6e22e>err</span> <span style=color:#66d9ef>error</span>)
+    <span style=color:#a6e22e>AnonGetBucketInfo</span>(<span style=color:#a6e22e>bucket</span> <span style=color:#66d9ef>string</span>) (<span style=color:#a6e22e>bucketInfo</span> <span style=color:#a6e22e>BucketInfo</span>, <span style=color:#a6e22e>err</span> <span style=color:#66d9ef>error</span>)
+}
+</code></pre></div><p>对于部分不支持的操作，可以使用留桩代码返回 <code>NotImplemented</code> 错误，官方提供了一个 <a href=https://github.com/minio/minio/blob/3d2d63f71e04404be70fda9653394915f4e7458a/cmd/gateway-unsupported.go><code>gatewayUnsupported</code></a> 可供参考。</p>
+<h3 id=implementation>Implementation</h3>
+<p>将上面的内容搞清楚后，剩下的工作就只是将相应的代码套进上面的接口了，没有太多技术含量。</p>
+<p>阿里云 OSS API 风格有很重的 AWS S3 痕迹，所以这个「翻译」工作很没有挑战性😜。</p>
+<p><strong>EDIT(2017-10-23)</strong> Pull Request 请看 <a href=https://github.com/minio/minio/pull/5103>minio/minio#5103</a></p>
+<p><strong>EDIT(2017-12-19)</strong> Minio 上游已经合并了 PR，以后就能直接使用了 :)</p>
+<p>想吐槽的是 minio 里面结构比较乱，加一个 Gateway 要改很多文件，所以又提交了一个 PR: <a href=https://github.com/minio/minio/pull/5111>minio/minio#5111</a></p>
+</section>
+<div class=post-tags>
+<nav class="nav tags">
+<ul class=tags>
+<li><a href=/tags/aws>AWS</a></li>
+<li><a href=/tags/s3>S3</a></li>
+<li><a href=/tags/oss>OSS</a></li>
+</ul>
+</nav>
+</div>
+</article>
+</main>
+<footer>
+<hr><a class=soc href=https://github.com/timonwong title=GitHub><i data-feather=github></i></a>|⚡️
+2021 © timonwong | <a href=https://github.com/athul/archie>Archie Theme</a> | Built with <a href=https://gohugo.io>Hugo</a>
+</footer>
+<script>feather.replace()</script></div>
+</body>
+</html>

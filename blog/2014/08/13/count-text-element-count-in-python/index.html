@@ -1,0 +1,288 @@
+<!doctype html><html><head>
+<meta charset=utf-8>
+<meta http-equiv=x-ua-compatible content="IE=edge"><title>在 Python 中统计文本字符个数 - Timon Wong</title><meta name=viewport content="width=device-width,initial-scale=1">
+<meta name=description content="字符集向来都是一个大问题，即使是 Python 3.x，也最多只是能说感谢 Unicode 字符集，字符串的存取现在没有问题了。
+Unicode 字符集的常见编码有 UTF-8、UTF-16、UTF-32 等常见格式，另外，GB18030 也可以算其中一种（ GB18030，与 UTF-8 类似，是一种变长编码格式，最大的优势就是兼容 GBK/GB2312 ）
+但是 Unicode 就能无痛的解决所有问题吗？答案是否定的。">
+<meta property="og:image" content>
+<meta property="og:title" content="在 Python 中统计文本字符个数">
+<meta property="og:description" content="字符集向来都是一个大问题，即使是 Python 3.x，也最多只是能说感谢 Unicode 字符集，字符串的存取现在没有问题了。
+Unicode 字符集的常见编码有 UTF-8、UTF-16、UTF-32 等常见格式，另外，GB18030 也可以算其中一种（ GB18030，与 UTF-8 类似，是一种变长编码格式，最大的优势就是兼容 GBK/GB2312 ）
+但是 Unicode 就能无痛的解决所有问题吗？答案是否定的。">
+<meta property="og:type" content="article">
+<meta property="og:url" content="https://theo.im/blog/2014/08/13/count-text-element-count-in-python/"><meta property="article:section" content="posts">
+<meta property="article:published_time" content="2014-08-13T14:05:02+00:00">
+<meta property="article:modified_time" content="2014-08-13T14:05:02+00:00">
+<meta name=twitter:card content="summary">
+<meta name=twitter:title content="在 Python 中统计文本字符个数">
+<meta name=twitter:description content="字符集向来都是一个大问题，即使是 Python 3.x，也最多只是能说感谢 Unicode 字符集，字符串的存取现在没有问题了。
+Unicode 字符集的常见编码有 UTF-8、UTF-16、UTF-32 等常见格式，另外，GB18030 也可以算其中一种（ GB18030，与 UTF-8 类似，是一种变长编码格式，最大的优势就是兼容 GBK/GB2312 ）
+但是 Unicode 就能无痛的解决所有问题吗？答案是否定的。">
+<script src=https://theo.im/js/feather.min.js></script>
+<link href=https://theo.im/css/fonts.b685ac6f654695232de7b82a9143a46f9e049c8e3af3a21d9737b01f4be211d1.css rel=stylesheet>
+<link rel=stylesheet type=text/css media=screen href=https://theo.im/css/main.2f9b5946627215dc1ae7fa5f82bfc9cfcab000329136befeea5733f21e77d68f.css>
+</head>
+<body>
+<div class=content><header>
+<div class=main>
+<a href=https://theo.im/>Timon Wong</a>
+</div>
+<nav>
+<a href=/>Home</a>
+<a href=/posts>Posts</a>
+<a href=/tags>Tags</a>
+</nav>
+</header>
+<main>
+<article>
+<div class=title>
+<h1 class=title>在 Python 中统计文本字符个数</h1>
+<div class=meta>Posted on Aug 13, 2014</div>
+</div>
+<section class=body>
+<p>字符集向来都是一个大问题，即使是 Python 3.x，也最多只是能说感谢 <a href=http://en.wikipedia.org/wiki/Unicode>Unicode</a> 字符集，字符串的存取现在没有问题了。</p>
+<p>Unicode 字符集的常见<strong>编码</strong>有 <a href=http://en.wikipedia.org/wiki/UTF-8>UTF-8</a>、<a href=http://en.wikipedia.org/wiki/UTF-16>UTF-16</a>、<a href=http://en.wikipedia.org/wiki/UTF-32>UTF-32</a> 等常见格式，另外，<a href=http://en.wikipedia.org/wiki/GB_18030>GB18030</a> 也可以算其中一种（ GB18030，与 UTF-8 类似，是一种变长编码格式，最大的优势就是兼容 <a href=http://en.wikipedia.org/wiki/GBK>GBK</a>/<a href=http://en.wikipedia.org/wiki/GB2312>GB2312</a> ）</p>
+<p>但是 Unicode 就能无痛的解决所有问题吗？答案是否定的。</p>
+<h3 id=吐槽吐槽吐槽>吐槽吐槽吐槽</h3>
+<p>题外话，对于传统的 MBCS 编码，总得说来 GBK 设计算是比较合理的，至少在 0x00 ~ 0x7f 的 ASCII 区间里面没有乱来。
+BIG5 就不说了，“许功盖” 问题大家都知道，简直鬼火冒。这里就来吐槽一下 Shift-JIS 和 EUC-KR：</p>
+<p><strong>Shift-JIS:</strong></p>
+<table>
+<thead>
+<tr>
+<th style=text-align:center>First byte</th>
+<th style=text-align:center>ASCII</th>
+<th style=text-align:center>Shift JIS</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style=text-align:center>0x5c</td>
+<td style=text-align:center><code>\</code></td>
+<td style=text-align:center><code>¥</code></td>
+</tr>
+<tr>
+<td style=text-align:center>0x7e</td>
+<td style=text-align:center><code>~</code></td>
+<td style=text-align:center><code>‾</code></td>
+</tr>
+</tbody>
+</table>
+<p><strong>EUC-KR:</strong></p>
+<table>
+<thead>
+<tr>
+<th style=text-align:center>First byte</th>
+<th style=text-align:center>ASCII</th>
+<th style=text-align:center>EUC-KR</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style=text-align:center>0x5c</td>
+<td style=text-align:center><code>\</code></td>
+<td style=text-align:center><code>₩</code></td>
+</tr>
+</tbody>
+</table>
+<p>满眼都是钱钱钱，呵呵，打住。</p>
+<h3 id=正文正文正文>正文正文正文</h3>
+<p>其它的先暂且不提，就说怎么统计字符个数吧（文本元素个数）。在 Python 中，往往想到的就是使用 <code>len()</code> 函数了：</p>
+<div class=highlight><pre tabindex=0 style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-python data-lang=python>s <span style=color:#f92672>=</span> <span style=color:#e6db74>&#39;中文&#39;</span>
+len(s) <span style=color:#75715e># 呵呵...</span>
+</code></pre></div><p>明智的人类知道有 Unicode，就可以把 Unicode 搬出来了，哪怕这个问题其实跟编码没有什么关系：</p>
+<blockquote>
+<p>用 Unicode 就好了，要不就使用 Python 3 字符串原生使用 Unicode，无痛解决所有问题</p>
+</blockquote>
+<p>Cooooooooooooool，让我们来试试：</p>
+<div class=highlight><pre tabindex=0 style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-python data-lang=python><span style=color:#75715e># -*- coding: utf-8 -*-</span>
+s1 <span style=color:#f92672>=</span> <span style=color:#e6db74>u</span><span style=color:#e6db74>&#39;中文&#39;</span>
+<span style=color:#66d9ef>assert</span> len(s1) <span style=color:#f92672>==</span> <span style=color:#ae81ff>2</span>  <span style=color:#75715e># Wow, 看起来对了是吧，让我们弹冠相庆吧</span>
+
+s2 <span style=color:#f92672>=</span> <span style=color:#e6db74>u</span><span style=color:#e6db74>&#39;𤴐𪚥&#39;</span>
+len(s2) <span style=color:#75715e># 呵呵呵...</span>
+</code></pre></div><p>天才的人类知道 UCS-2 和 UCS-4 的区别：</p>
+<blockquote>
+<p>谁叫你用 Windows 呢，只能用 UTF-16，弱爆了， Linux 下用 UCS-4 就能解决问题了</p>
+</blockquote>
+<p>Sure? 举一个反例就可以了：</p>
+<div class=highlight><pre tabindex=0 style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-python data-lang=python><span style=color:#f92672>import</span> sys
+
+<span style=color:#66d9ef>assert</span> sys<span style=color:#f92672>.</span>maxunicode <span style=color:#f92672>==</span> <span style=color:#ae81ff>0x10ffff</span>  <span style=color:#75715e># 保证是通过 UCS-4 编译的</span>
+
+<span style=color:#75715e># 这样，常见字，没有问题，GOOD</span>
+<span style=color:#66d9ef>assert</span> len(<span style=color:#e6db74>u</span><span style=color:#e6db74>&#39;中文&#39;</span>) <span style=color:#f92672>==</span> <span style=color:#ae81ff>2</span>
+
+<span style=color:#75715e># 这样，生僻字，Non BMP，也没有问题, GOOD</span>
+<span style=color:#66d9ef>assert</span> len(<span style=color:#e6db74>u</span><span style=color:#e6db74>&#39;𤴐𪚥&#39;</span>) <span style=color:#f92672>==</span> <span style=color:#ae81ff>2</span>
+
+<span style=color:#75715e># 欢迎来到 Unicode 的世界, 不要忘了 Unicode 有叫 Mark 的这种东西</span>
+<span style=color:#66d9ef>assert</span> len(<span style=color:#e6db74>u</span><span style=color:#e6db74>&#39;ë́&#39;</span>) <span style=color:#f92672>==</span> <span style=color:#ae81ff>2</span>
+
+</code></pre></div><p><img src=https://theo-im-1255089908.cos.ap-chengdu.myqcloud.com/images/yaoming-face.jpg alt></p>
+<p>所以最怕半罐水了（当然也包括我自己，太可怕了）。</p>
+<h3 id=show-me-the-source-code>Show Me The Source Code</h3>
+<p>在 .Net Framwork 里，有一个叫 String.Globalization.StringInfo 的类可以处理上面的情况。
+由于我本人比较懒，就直接参考 Mono 的代码写了，Mono 的代码可以<a href=https://github.com/mono/mono/blob/master/mcs/class/corlib/System.Globalization/StringInfo.cs>点击这里查看</a>。</p>
+<p>为了避免系统的编码问题，推荐保存为文件(&lsquo;stringinfo.py&rsquo;)，再使用 Python 解析器执行：</p>
+<div class=highlight><pre tabindex=0 style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-python data-lang=python><span style=color:#f92672>import</span> unicodedata
+<span style=color:#f92672>import</span> sys
+
+__all__ <span style=color:#f92672>=</span> [<span style=color:#e6db74>&#39;UnicodeCategory&#39;</span>, <span style=color:#e6db74>&#39;StringInfo&#39;</span>]
+
+PY3K <span style=color:#f92672>=</span> sys<span style=color:#f92672>.</span>version_info[<span style=color:#ae81ff>0</span>] <span style=color:#f92672>&gt;=</span> <span style=color:#ae81ff>3</span>
+
+<span style=color:#66d9ef>if</span> PY3K:
+    unicode_type <span style=color:#f92672>=</span> str
+<span style=color:#66d9ef>else</span>:
+    unicode_type <span style=color:#f92672>=</span> unicode
+
+
+<span style=color:#66d9ef>class</span> <span style=color:#a6e22e>UnicodeCategory</span>(object):
+    <span style=color:#e6db74>&#34;&#34;&#34;General Category for Unicode
+</span><span style=color:#e6db74>
+</span><span style=color:#e6db74>    http://www.unicode.org/versions/Unicode6.0.0/ch04.pdf
+</span><span style=color:#e6db74>    &#34;&#34;&#34;</span>
+
+    <span style=color:#75715e># Letter</span>
+    UppercaseLetter <span style=color:#f92672>=</span> <span style=color:#e6db74>&#39;Lu&#39;</span>
+    LowercaseLetter <span style=color:#f92672>=</span> <span style=color:#e6db74>&#39;Ll&#39;</span>
+    TitlecaseLetter <span style=color:#f92672>=</span> <span style=color:#e6db74>&#39;Lt&#39;</span>
+    ModifierLetter <span style=color:#f92672>=</span> <span style=color:#e6db74>&#39;Lm&#39;</span>
+    OtherLetter <span style=color:#f92672>=</span> <span style=color:#e6db74>&#39;Lo&#39;</span>
+    <span style=color:#75715e># Mark</span>
+    NonSpacingMark <span style=color:#f92672>=</span> <span style=color:#e6db74>&#39;Mn&#39;</span>
+    SpacingCombiningMark <span style=color:#f92672>=</span> <span style=color:#e6db74>&#39;Mc&#39;</span>
+    EnclosingMark <span style=color:#f92672>=</span> <span style=color:#e6db74>&#39;Me&#39;</span>
+    <span style=color:#75715e># Number</span>
+    DecimalDigitNumber <span style=color:#f92672>=</span> <span style=color:#e6db74>&#39;Nd&#39;</span>
+    LetterNumber <span style=color:#f92672>=</span> <span style=color:#e6db74>&#39;Nl&#39;</span>
+    OtherNumber <span style=color:#f92672>=</span> <span style=color:#e6db74>&#39;No&#39;</span>
+    <span style=color:#75715e># Separator</span>
+    SpaceSeparator <span style=color:#f92672>=</span> <span style=color:#e6db74>&#39;Zs&#39;</span>
+    LineSeparator <span style=color:#f92672>=</span> <span style=color:#e6db74>&#39;Zl&#39;</span>
+    ParagraphSeparator <span style=color:#f92672>=</span> <span style=color:#e6db74>&#39;Zp&#39;</span>
+    <span style=color:#75715e># Punctuation</span>
+    ConnectorPunctuation <span style=color:#f92672>=</span> <span style=color:#e6db74>&#39;Pc&#39;</span>
+    DashPunctuation <span style=color:#f92672>=</span> <span style=color:#e6db74>&#39;Pd&#39;</span>
+    OpenPunctuation <span style=color:#f92672>=</span> <span style=color:#e6db74>&#39;Ps&#39;</span>
+    ClosePunctuation <span style=color:#f92672>=</span> <span style=color:#e6db74>&#39;Pe&#39;</span>
+    InitialQuotePunctuation <span style=color:#f92672>=</span> <span style=color:#e6db74>&#39;Pi&#39;</span>
+    FinalQuotePunctuation <span style=color:#f92672>=</span> <span style=color:#e6db74>&#39;Pf&#39;</span>
+    OtherPunctuation <span style=color:#f92672>=</span> <span style=color:#e6db74>&#39;Po&#39;</span>
+    <span style=color:#75715e># Symbol</span>
+    MathSymbol <span style=color:#f92672>=</span> <span style=color:#e6db74>&#39;Sm&#39;</span>
+    CurrencySymbol <span style=color:#f92672>=</span> <span style=color:#e6db74>&#39;Sc&#39;</span>
+    ModifierSymbol <span style=color:#f92672>=</span> <span style=color:#e6db74>&#39;Sk&#39;</span>
+    OtherSymbol <span style=color:#f92672>=</span> <span style=color:#e6db74>&#39;So&#39;</span>
+    <span style=color:#75715e># Other</span>
+    Control <span style=color:#f92672>=</span> <span style=color:#e6db74>&#39;Cc&#39;</span>
+    Format <span style=color:#f92672>=</span> <span style=color:#e6db74>&#39;Cf&#39;</span>
+    Surrogate <span style=color:#f92672>=</span> <span style=color:#e6db74>&#39;Cs&#39;</span>
+    PrivateUse <span style=color:#f92672>=</span> <span style=color:#e6db74>&#39;Co&#39;</span>
+    OtherNotAssigned <span style=color:#f92672>=</span> <span style=color:#e6db74>&#39;Cn&#39;</span>
+
+
+<span style=color:#66d9ef>class</span> <span style=color:#a6e22e>StringInfo</span>(object):
+    <span style=color:#66d9ef>def</span> __init__(self, s):
+        <span style=color:#66d9ef>if</span> <span style=color:#f92672>not</span> isinstance(s, unicode_type):
+            <span style=color:#66d9ef>raise</span> <span style=color:#a6e22e>TypeError</span>(<span style=color:#e6db74>&#34;&#39;string&#39; parameter must be unicode&#34;</span>)
+        self<span style=color:#f92672>.</span>s <span style=color:#f92672>=</span> s
+
+    <span style=color:#a6e22e>@property</span>
+    <span style=color:#66d9ef>def</span> <span style=color:#a6e22e>length_in_text_elements</span>(self):
+        <span style=color:#e6db74>&#34;&#34;&#34;Gets the number of text elements.&#34;&#34;&#34;</span>
+        l <span style=color:#f92672>=</span> getattr(self, <span style=color:#e6db74>&#39;_length_in_text_elements&#39;</span>, <span style=color:#66d9ef>None</span>)
+        <span style=color:#66d9ef>if</span> l <span style=color:#f92672>is</span> <span style=color:#66d9ef>None</span>:
+            l <span style=color:#f92672>=</span> sum(<span style=color:#ae81ff>1</span> <span style=color:#66d9ef>for</span> _ <span style=color:#f92672>in</span> self<span style=color:#f92672>.</span>text_element_length_generator(self<span style=color:#f92672>.</span>s))
+            setattr(self, <span style=color:#e6db74>&#39;_length_in_text_elements&#39;</span>, l)
+        <span style=color:#66d9ef>return</span> l
+
+    <span style=color:#a6e22e>@classmethod</span>
+    <span style=color:#66d9ef>def</span> <span style=color:#a6e22e>text_element_length_generator</span>(cls, s):
+        <span style=color:#e6db74>&#34;&#34;&#34;Gets the text element index generator of the specified string.&#34;&#34;&#34;</span>
+        <span style=color:#66d9ef>if</span> <span style=color:#f92672>not</span> isinstance(s, unicode_type):
+            <span style=color:#66d9ef>raise</span> <span style=color:#a6e22e>TypeError</span>(<span style=color:#e6db74>&#34;parameter &#39;s&#39; must be unicode&#34;</span>)
+
+        marks <span style=color:#f92672>=</span> set([UnicodeCategory<span style=color:#f92672>.</span>NonSpacingMark,
+                     UnicodeCategory<span style=color:#f92672>.</span>SpacingCombiningMark,
+                     UnicodeCategory<span style=color:#f92672>.</span>EnclosingMark])
+
+        idx <span style=color:#f92672>=</span> <span style=color:#ae81ff>0</span>
+        <span style=color:#66d9ef>while</span> idx <span style=color:#f92672>&lt;</span> len(s):
+            ch <span style=color:#f92672>=</span> s[idx]
+            count <span style=color:#f92672>=</span> <span style=color:#ae81ff>1</span>
+            cat <span style=color:#f92672>=</span> unicodedata<span style=color:#f92672>.</span>category(ch)
+
+            <span style=color:#66d9ef>if</span> cat <span style=color:#f92672>==</span> UnicodeCategory<span style=color:#f92672>.</span>Surrogate:
+                <span style=color:#75715e># Check that it&#39;s a high surrogate followed by a low surrogate</span>
+                <span style=color:#66d9ef>if</span> <span style=color:#ae81ff>0xd800</span> <span style=color:#f92672>&lt;=</span> ord(ch) <span style=color:#f92672>&lt;=</span> <span style=color:#ae81ff>0xdbff</span>:
+                    <span style=color:#66d9ef>if</span> (idx <span style=color:#f92672>+</span> <span style=color:#ae81ff>1</span>) <span style=color:#f92672>&lt;</span> len(s) <span style=color:#f92672>and</span> \
+                            <span style=color:#ae81ff>0xdc00</span> <span style=color:#f92672>&lt;=</span> ord(s[idx <span style=color:#f92672>+</span> <span style=color:#ae81ff>1</span>]) <span style=color:#f92672>&lt;=</span> <span style=color:#ae81ff>0xdfff</span>:
+                        <span style=color:#75715e># A valid surrogate pair</span>
+                        count <span style=color:#f92672>=</span> <span style=color:#ae81ff>2</span>
+            <span style=color:#66d9ef>else</span>:
+                <span style=color:#75715e># Look for a base character, which may or may not be followed by a</span>
+                <span style=color:#75715e># series of combining characters</span>
+                <span style=color:#66d9ef>if</span> cat <span style=color:#f92672>not</span> <span style=color:#f92672>in</span> marks:
+                    <span style=color:#66d9ef>while</span> idx <span style=color:#f92672>+</span> count <span style=color:#f92672>&lt;</span> len(s):
+                        cat <span style=color:#f92672>=</span> unicodedata<span style=color:#f92672>.</span>category(s[idx <span style=color:#f92672>+</span> count])
+                        <span style=color:#66d9ef>if</span> cat <span style=color:#f92672>not</span> <span style=color:#f92672>in</span> marks:
+                            <span style=color:#75715e># Finished the sequence</span>
+                            <span style=color:#66d9ef>break</span>
+                        count <span style=color:#f92672>+=</span> <span style=color:#ae81ff>1</span>
+            <span style=color:#66d9ef>yield</span> count
+            idx <span style=color:#f92672>+=</span> count
+
+    <span style=color:#a6e22e>@classmethod</span>
+    <span style=color:#66d9ef>def</span> <span style=color:#a6e22e>text_element_generator</span>(cls, s):
+        <span style=color:#e6db74>&#34;&#34;&#34;Gets the text element generator of the specified string.&#34;&#34;&#34;</span>
+        idx <span style=color:#f92672>=</span> <span style=color:#ae81ff>0</span>
+        <span style=color:#66d9ef>for</span> length <span style=color:#f92672>in</span> cls<span style=color:#f92672>.</span>text_element_length_generator(s):
+            <span style=color:#66d9ef>yield</span> s[idx:idx<span style=color:#f92672>+</span>length]
+            idx <span style=color:#f92672>+=</span> length
+</code></pre></div><p>然后简单测试一下：</p>
+<div class=highlight><pre tabindex=0 style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-python data-lang=python><span style=color:#75715e># -*- coding: utf-8 -*-</span>
+<span style=color:#f92672>from</span> __future__ <span style=color:#f92672>import</span> print_function
+
+<span style=color:#f92672>import</span> unicodedata
+<span style=color:#f92672>import</span> sys
+
+<span style=color:#f92672>from</span> stringinfo <span style=color:#f92672>import</span> StringInfo
+
+
+<span style=color:#66d9ef>def</span> <span style=color:#a6e22e>main</span>():
+    <span style=color:#66d9ef>if</span> sys<span style=color:#f92672>.</span>maxunicode <span style=color:#f92672>&gt;</span> <span style=color:#ae81ff>0xffff</span>:
+        print(<span style=color:#e6db74>&#34;Unicode encoding is UTF-32&#34;</span>)
+    <span style=color:#66d9ef>else</span>:
+        print(<span style=color:#e6db74>&#34;Unicode encoding is UTF-16&#34;</span>)
+
+    s <span style=color:#f92672>=</span> <span style=color:#e6db74>u</span><span style=color:#e6db74>&#34;ë́中文𤴐𪚥&#34;</span>
+    print(len(s))  <span style=color:#75715e># 根据 Python 是否启用 UCS-4，结果不同，UTF-16 下是 8，UCS-4 下是 6</span>
+    print(StringInfo(s)<span style=color:#f92672>.</span>length_in_text_elements)  <span style=color:#75715e># 5个字符</span>
+    <span style=color:#66d9ef>for</span> c <span style=color:#f92672>in</span> s:
+        print(<span style=color:#e6db74>&#39;U+</span><span style=color:#e6db74>{:04X}</span><span style=color:#e6db74>:</span><span style=color:#e6db74>{}</span><span style=color:#e6db74>&#39;</span><span style=color:#f92672>.</span>format(ord(c), unicodedata<span style=color:#f92672>.</span>category(c)))
+
+
+<span style=color:#66d9ef>if</span> __name__ <span style=color:#f92672>==</span> <span style=color:#e6db74>&#39;__main__&#39;</span>:
+    main()
+</code></pre></div><p>╮(╯_╰)╭ 终于舒服了。</p>
+<p>~FIN~</p>
+</section>
+<div class=post-tags>
+<nav class="nav tags">
+<ul class=tags>
+<li><a href=/tags/python>Python</a></li>
+<li><a href=/tags/unicode>Unicode</a></li>
+</ul>
+</nav>
+</div>
+</article>
+</main>
+<footer>
+<hr><a class=soc href=https://github.com/timonwong title=GitHub><i data-feather=github></i></a>|⚡️
+2021 © timonwong | <a href=https://github.com/athul/archie>Archie Theme</a> | Built with <a href=https://gohugo.io>Hugo</a>
+</footer>
+<script>feather.replace()</script></div>
+</body>
+</html>

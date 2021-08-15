@@ -1,0 +1,112 @@
+<!doctype html><html><head>
+<meta charset=utf-8>
+<meta http-equiv=x-ua-compatible content="IE=edge"><title>将钉钉接入 Prometheus AlertManager WebHook - Timon Wong</title><meta name=viewport content="width=device-width,initial-scale=1">
+<meta name=description content="TL;DR
+Disclaimer: Personally I dislike DingTalk(a.k.a DingDing) at all 😜.
+Project Repo: https://github.com/timonwong/prometheus-webhook-dingtalk">
+<meta property="og:image" content>
+<meta property="og:title" content="将钉钉接入 Prometheus AlertManager WebHook">
+<meta property="og:description" content="TL;DR
+Disclaimer: Personally I dislike DingTalk(a.k.a DingDing) at all 😜.
+Project Repo: https://github.com/timonwong/prometheus-webhook-dingtalk">
+<meta property="og:type" content="article">
+<meta property="og:url" content="https://theo.im/blog/2017/10/16/release-prometheus-alertmanager-webhook-for-dingtalk/"><meta property="article:section" content="posts">
+<meta property="article:published_time" content="2017-10-16T21:08:03+00:00">
+<meta property="article:modified_time" content="2017-10-16T21:08:03+00:00">
+<meta name=twitter:card content="summary">
+<meta name=twitter:title content="将钉钉接入 Prometheus AlertManager WebHook">
+<meta name=twitter:description content="TL;DR
+Disclaimer: Personally I dislike DingTalk(a.k.a DingDing) at all 😜.
+Project Repo: https://github.com/timonwong/prometheus-webhook-dingtalk">
+<script src=https://theo.im/js/feather.min.js></script>
+<link href=https://theo.im/css/fonts.b685ac6f654695232de7b82a9143a46f9e049c8e3af3a21d9737b01f4be211d1.css rel=stylesheet>
+<link rel=stylesheet type=text/css media=screen href=https://theo.im/css/main.2f9b5946627215dc1ae7fa5f82bfc9cfcab000329136befeea5733f21e77d68f.css>
+</head>
+<body>
+<div class=content><header>
+<div class=main>
+<a href=https://theo.im/>Timon Wong</a>
+</div>
+<nav>
+<a href=/>Home</a>
+<a href=/posts>Posts</a>
+<a href=/tags>Tags</a>
+</nav>
+</header>
+<main>
+<article>
+<div class=title>
+<h1 class=title>将钉钉接入 Prometheus AlertManager WebHook</h1>
+<div class=meta>Posted on Oct 16, 2017</div>
+</div>
+<section class=body>
+<h2 id=tldr>TL;DR</h2>
+<p><strong>Disclaimer</strong>: Personally I dislike <a href=https://www.dingtalk.com>DingTalk</a>(a.k.a DingDing) at all 😜.</p>
+<p>Project Repo: <a href=https://github.com/timonwong/prometheus-webhook-dingtalk>https://github.com/timonwong/prometheus-webhook-dingtalk</a></p>
+<h2 id=why>Why</h2>
+<p>在敝人的「忽悠」下，敝厂在 2016 年中就全面使用了 <a href=https://prometheus.io>Prometheus</a> 作为监控系统，这个系统现在已经比较火了，这里就不再多加口舌阐述。后来，敝厂使用了钉钉作为公司内部的指定通（dă）讯（kă）软件，取代了 <a href=https://slack.com>Slack</a>。不得不说，比起 <a href=https://slack.com>Slack</a> 来，显示报警通知，钉钉不美观。</p>
+<p>按照我个人的看法，一个合格的报警通知，应该包含如下内容：</p>
+<ul>
+<li>报警级别</li>
+<li>简短的报警名称</li>
+<li>简要说明</li>
+<li>详细说明</li>
+<li>附加上下文信息</li>
+<li>一个链接，点击后进入指标的 Graph</li>
+</ul>
+<p>幸运的是，<a href=https://prometheus.io>Prometheus</a> <a href=https://github.com/prometheus/alertmanager>AlertManager</a> 已经包含了一个做得比较好的 <a href=https://slack.com>Slack</a> 报警模板，只需要从<a href=https://github.com/prometheus/docs/blob/db2a09a8a7e193d6e474f37055908a6d432b88b5/content/docs/alerting/configuration.md#webhook_config>这里</a>开始就可以了。</p>
+<h2 id=routes>Routes</h2>
+<p><code>prometheus-webhook-dingtalk</code> 默认监听在<code>8060</code>端口（可配置）上，提供了以下路由供 <a href=https://github.com/prometheus/alertmanager>AlertManager</a> 的 <a href=https://prometheus.io/docs/alerting/configuration/#%3Cwebhook_config%3E>webhook_configs</a> 使用：</p>
+<ul>
+<li><code>/dingtalk/&lt;profile>/send</code></li>
+</ul>
+<p>注意这里的 <code>&lt;profile></code> 需要在 <code>-ding.profile</code> 中指定相应的名称（<code>&lt;profile></code>）以及钉钉的自定义机器人 WebHook URL（<code>&lt;dingtalk-webhook-url></code>）。</p>
+<h2 id=usage>Usage</h2>
+<p>首先，我个人不喜欢随处都是配置文件的现象，因此 <code>prometheus-webhook-dingtalk</code> 的所有配置通过命令行参数完成:</p>
+<div class=highlight><pre tabindex=0 style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-fallback data-lang=fallback>usage: prometheus-webhook-dingtalk --ding.profile=DING.PROFILE [&lt;flags&gt;]
+
+Flags:
+  -h, --help             Show context-sensitive help (also try --help-long and --help-man).
+      --web.listen-address=&#34;:8060&#34;
+                         The address to listen on for web interface.
+      --ding.profile=DING.PROFILE ...
+                         Custom DingTalk profile (can specify multiple times, &lt;profile&gt;=&lt;dingtalk-url&gt;).
+      --ding.timeout=5s  Timeout for invoking DingTalk webhook.
+      --log.level=info   Only log messages with the given severity or above. One of: [debug, info, warn, error]
+      --version          Show application version.
+</code></pre></div><p>关于这里的 <code>-ding.profile</code> 参数：为了支持同时往多个钉钉自定义机器人发送报警消息，因此 <code>-ding.profile</code> 可以在命令行中指定多次，比如:</p>
+<div class=highlight><pre tabindex=0 style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-bash data-lang=bash>prometheus-webhook-dingtalk <span style=color:#ae81ff>\
+</span><span style=color:#ae81ff></span>    --ding.profile<span style=color:#f92672>=</span><span style=color:#e6db74>&#34;webhook1=https://oapi.dingtalk.com/robot/send?access_token=xxxxxxxxxxxx&#34;</span> <span style=color:#ae81ff>\
+</span><span style=color:#ae81ff></span>    --ding.profile<span style=color:#f92672>=</span><span style=color:#e6db74>&#34;webhook2=https://oapi.dingtalk.com/robot/send?access_token=yyyyyyyyyyy&#34;</span>
+</code></pre></div><p>这里就定义了两个 WebHook，一个 <code>webhook1</code>，一个 <code>webhook2</code>，用来往不同的钉钉组发送报警消息。</p>
+<p>然后在 <a href=https://github.com/prometheus/alertmanager>AlertManager</a> 的配置里面，加入相应的 <code>receiver</code>（注意下面的 <code>url</code>）即可：</p>
+<div class=highlight><pre tabindex=0 style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-yaml data-lang=yaml><span style=color:#f92672>receivers</span>:
+- <span style=color:#f92672>name</span>: <span style=color:#ae81ff>send_to_dingding_webhook1</span>
+  <span style=color:#f92672>webhook_configs</span>:
+  - <span style=color:#f92672>send_resolved</span>: <span style=color:#66d9ef>false</span>
+    <span style=color:#f92672>url</span>: <span style=color:#ae81ff>http://localhost:8060/dingtalk/webhook1/send</span>
+- <span style=color:#f92672>name</span>: <span style=color:#ae81ff>send_to_dingding_webhook2</span>
+  <span style=color:#f92672>webhook_configs</span>:
+  - <span style=color:#f92672>send_resolved</span>: <span style=color:#66d9ef>false</span>
+    <span style=color:#f92672>url</span>: <span style=color:#ae81ff>http://localhost:8060/dingtalk/webhook2/send</span>
+</code></pre></div><h3 id=in-action>In Action</h3>
+<p>参见官方文章：<a href="https://open-doc.dingtalk.com/docs/doc.htm?treeId=257&articleId=105735&docType=1">https://open-doc.dingtalk.com/docs/doc.htm?treeId=257&articleId=105735&docType=1</a>，然后将 webhook 地址拷贝下来，传给 <code>prometheus-webhook-dingtalk</code>。</p>
+<p>最后，来个截图看看效果吧：</p>
+<p><img src=https://theo-im-1255089908.cos.ap-chengdu.myqcloud.com/images/2016-10-16-dingtalk-in-action.png alt></p>
+</section>
+<div class=post-tags>
+<nav class="nav tags">
+<ul class=tags>
+<li><a href=/tags/prometheus>Prometheus</a></li>
+</ul>
+</nav>
+</div>
+</article>
+</main>
+<footer>
+<hr><a class=soc href=https://github.com/timonwong title=GitHub><i data-feather=github></i></a>|⚡️
+2021 © timonwong | <a href=https://github.com/athul/archie>Archie Theme</a> | Built with <a href=https://gohugo.io>Hugo</a>
+</footer>
+<script>feather.replace()</script></div>
+</body>
+</html>

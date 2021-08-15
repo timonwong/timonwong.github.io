@@ -1,0 +1,124 @@
+<!doctype html><html><head>
+<meta charset=utf-8>
+<meta http-equiv=x-ua-compatible content="IE=edge"><title>RabbitMQ笔记（三）: Pika客户端（Python）发送大尺寸消息的问题 - Timon Wong</title><meta name=viewport content="width=device-width,initial-scale=1">
+<meta name=description content="问题描述 这个问题存在很久了，现象就是使用 Pika 库的客户端在发送大尺寸消息后，RabbitMQ 没有收到，Consumer 那里会认为消息已丢失。
+NOTE: 即使在本文写时的最新版(v0.9.13)依然存在这个问题。
+分析 因为网络状态很好，所以没有考虑网络的错误，直接考虑Pika库的问题。
+那么第一步就是把 Pika 的代码拿来读一遍，主要看它是怎么发送消息的，经过一番探索，找到了 pika/adapters/base_connection.py 这个文件，来看看里面的内容：
+def _handle_write(self): &#34;&#34;&#34;Handle any outbound buffer writes that need to take place.&#34;&#34;&#34; total_written = 0 if self.outbound_buffer: try: bytes_written = self.socket.send(self.outbound_buffer.popleft()) except socket.timeout: raise except socket.error, error: return self._handle_error(error) total_written += bytes_written return total_written 看出问题了吗？
+来看看socket.send的文档吧：
+ Send data to the socket. The socket must be connected to a remote socket. The optional flags argument has the same meaning as for recv() above.">
+<meta property="og:image" content>
+<meta property="og:title" content="RabbitMQ笔记（三）: Pika客户端（Python）发送大尺寸消息的问题">
+<meta property="og:description" content="问题描述 这个问题存在很久了，现象就是使用 Pika 库的客户端在发送大尺寸消息后，RabbitMQ 没有收到，Consumer 那里会认为消息已丢失。
+NOTE: 即使在本文写时的最新版(v0.9.13)依然存在这个问题。
+分析 因为网络状态很好，所以没有考虑网络的错误，直接考虑Pika库的问题。
+那么第一步就是把 Pika 的代码拿来读一遍，主要看它是怎么发送消息的，经过一番探索，找到了 pika/adapters/base_connection.py 这个文件，来看看里面的内容：
+def _handle_write(self): &#34;&#34;&#34;Handle any outbound buffer writes that need to take place.&#34;&#34;&#34; total_written = 0 if self.outbound_buffer: try: bytes_written = self.socket.send(self.outbound_buffer.popleft()) except socket.timeout: raise except socket.error, error: return self._handle_error(error) total_written += bytes_written return total_written 看出问题了吗？
+来看看socket.send的文档吧：
+ Send data to the socket. The socket must be connected to a remote socket. The optional flags argument has the same meaning as for recv() above.">
+<meta property="og:type" content="article">
+<meta property="og:url" content="https://theo.im/blog/2014/05/15/rabbitmq-note-3-pika-send-large-message/"><meta property="article:section" content="posts">
+<meta property="article:published_time" content="2014-05-15T10:27:25+00:00">
+<meta property="article:modified_time" content="2014-05-15T10:27:25+00:00">
+<meta name=twitter:card content="summary">
+<meta name=twitter:title content="RabbitMQ笔记（三）: Pika客户端（Python）发送大尺寸消息的问题">
+<meta name=twitter:description content="问题描述 这个问题存在很久了，现象就是使用 Pika 库的客户端在发送大尺寸消息后，RabbitMQ 没有收到，Consumer 那里会认为消息已丢失。
+NOTE: 即使在本文写时的最新版(v0.9.13)依然存在这个问题。
+分析 因为网络状态很好，所以没有考虑网络的错误，直接考虑Pika库的问题。
+那么第一步就是把 Pika 的代码拿来读一遍，主要看它是怎么发送消息的，经过一番探索，找到了 pika/adapters/base_connection.py 这个文件，来看看里面的内容：
+def _handle_write(self): &#34;&#34;&#34;Handle any outbound buffer writes that need to take place.&#34;&#34;&#34; total_written = 0 if self.outbound_buffer: try: bytes_written = self.socket.send(self.outbound_buffer.popleft()) except socket.timeout: raise except socket.error, error: return self._handle_error(error) total_written += bytes_written return total_written 看出问题了吗？
+来看看socket.send的文档吧：
+ Send data to the socket. The socket must be connected to a remote socket. The optional flags argument has the same meaning as for recv() above.">
+<script src=https://theo.im/js/feather.min.js></script>
+<link href=https://theo.im/css/fonts.b685ac6f654695232de7b82a9143a46f9e049c8e3af3a21d9737b01f4be211d1.css rel=stylesheet>
+<link rel=stylesheet type=text/css media=screen href=https://theo.im/css/main.2f9b5946627215dc1ae7fa5f82bfc9cfcab000329136befeea5733f21e77d68f.css>
+</head>
+<body>
+<div class=content><header>
+<div class=main>
+<a href=https://theo.im/>Timon Wong</a>
+</div>
+<nav>
+<a href=/>Home</a>
+<a href=/posts>Posts</a>
+<a href=/tags>Tags</a>
+</nav>
+</header>
+<main>
+<article>
+<div class=title>
+<h1 class=title>RabbitMQ笔记（三）: Pika客户端（Python）发送大尺寸消息的问题</h1>
+<div class=meta>Posted on May 15, 2014</div>
+</div>
+<section class=body>
+<h2 id=问题描述>问题描述</h2>
+<p>这个问题存在很久了，现象就是使用 <a href=https://pypi.python.org/pypi/pika/>Pika</a> 库的客户端在发送大尺寸消息后，RabbitMQ
+没有收到，Consumer 那里会认为消息已丢失。</p>
+<p><strong>NOTE:</strong> 即使在本文写时的最新版(v0.9.13)依然存在这个问题。</p>
+<h2 id=分析>分析</h2>
+<p>因为网络状态很好，所以没有考虑网络的错误，直接考虑<a href=https://pypi.python.org/pypi/pika/>Pika</a>库的问题。</p>
+<p>那么第一步就是把 <a href=https://pypi.python.org/pypi/pika/>Pika</a> 的代码拿来读一遍，主要看它是怎么发送消息的，经过一番探索，找到了
+<code>pika/adapters/base_connection.py</code> 这个文件，来看看里面的内容：</p>
+<div class=highlight><pre tabindex=0 style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-python data-lang=python>    <span style=color:#66d9ef>def</span> <span style=color:#a6e22e>_handle_write</span>(self):
+        <span style=color:#e6db74>&#34;&#34;&#34;Handle any outbound buffer writes that need to take place.&#34;&#34;&#34;</span>
+        total_written <span style=color:#f92672>=</span> <span style=color:#ae81ff>0</span>
+        <span style=color:#66d9ef>if</span> self<span style=color:#f92672>.</span>outbound_buffer:
+            <span style=color:#66d9ef>try</span>:
+                bytes_written <span style=color:#f92672>=</span> self<span style=color:#f92672>.</span>socket<span style=color:#f92672>.</span>send(self<span style=color:#f92672>.</span>outbound_buffer<span style=color:#f92672>.</span>popleft())
+            <span style=color:#66d9ef>except</span> socket<span style=color:#f92672>.</span>timeout:
+                <span style=color:#66d9ef>raise</span>
+            <span style=color:#66d9ef>except</span> socket<span style=color:#f92672>.</span>error, error:
+                <span style=color:#66d9ef>return</span> self<span style=color:#f92672>.</span>_handle_error(error)
+            total_written <span style=color:#f92672>+=</span> bytes_written
+        <span style=color:#66d9ef>return</span> total_written
+</code></pre></div><p>看出问题了吗？</p>
+<p>来看看<a href=https://docs.python.org/2/library/socket.html#socket.socket.send>socket.send</a>的文档吧：</p>
+<blockquote>
+<p>Send data to the socket. The socket must be connected to a remote socket. The optional flags argument has the same meaning as for recv() above. Returns the number of bytes sent. Applications are responsible for checking that all data has been sent; if only some of the data was transmitted, the application needs to attempt delivery of the remaining data. For further information on this concept, consult the Socket Programming HOWTO.</p>
+</blockquote>
+<p>问题就是，没有检查 <code>socket.send</code> 的返回值，由于 <code>socket.send</code> 返回实际发送的直接个数，可能会小于期望（在这里是
+<code>self.outbound_buffer.popleft()</code>）。</p>
+<p>由于 <code>socket.send</code> 可能没有将数据发送完成就返回了，造成了消息丢失的情况。</p>
+<p>本来想自己修的，看了一眼 <a href=https://pypi.python.org/pypi/pika/>Pika</a> 的 <code>master</code> 分支，已经修正了（一次保证将一个帧(Frame)发送完成）：</p>
+<div class=highlight><pre tabindex=0 style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-python data-lang=python>    <span style=color:#66d9ef>def</span> <span style=color:#a6e22e>_handle_write</span>(self):
+        <span style=color:#e6db74>&#34;&#34;&#34;Handle any outbound buffer writes that need to take place.&#34;&#34;&#34;</span>
+        bytes_written <span style=color:#f92672>=</span> <span style=color:#ae81ff>0</span>
+        <span style=color:#66d9ef>if</span> self<span style=color:#f92672>.</span>outbound_buffer:
+            frame <span style=color:#f92672>=</span> self<span style=color:#f92672>.</span>outbound_buffer<span style=color:#f92672>.</span>popleft()
+            <span style=color:#66d9ef>try</span>:
+                self<span style=color:#f92672>.</span>socket<span style=color:#f92672>.</span>sendall(frame)
+                bytes_written <span style=color:#f92672>=</span> len(frame)
+            <span style=color:#66d9ef>except</span> socket<span style=color:#f92672>.</span>timeout:
+                <span style=color:#66d9ef>raise</span>
+            <span style=color:#66d9ef>except</span> socket<span style=color:#f92672>.</span>error <span style=color:#66d9ef>as</span> error:
+                <span style=color:#66d9ef>return</span> self<span style=color:#f92672>.</span>_handle_error(error)
+        <span style=color:#66d9ef>return</span> bytes_written
+</code></pre></div><p>呵呵……</p>
+<h2 id=解决>解决</h2>
+<ol>
+<li>自行打补丁；</li>
+<li>使用 <code>git</code> 上的 Pika: <code>pip install git+https://github.com/pika/pika.git</code>；</li>
+<li>不用 <a href=https://pypi.python.org/pypi/pika/>Pika</a>, 换其它的，比如 <a href=http://kombu.readthedocs.org/>Kombu</a>。</li>
+</ol>
+<p>我现在不用 <a href=https://pypi.python.org/pypi/pika/>Pika</a> 了，用 <a href=http://kombu.readthedocs.org/>Kombu</a>。</p>
+<p><strong>PS:</strong> <a href=https://pypi.python.org/pypi/pika/>Pika</a> 的发布也太不积极了，都怎么久了还不发新版本。</p>
+</section>
+<div class=post-tags>
+<nav class="nav tags">
+<ul class=tags>
+<li><a href=/tags/rabbitmq>RabbitMQ</a></li>
+<li><a href=/tags/pika>Pika</a></li>
+<li><a href=/tags/python>Python</a></li>
+</ul>
+</nav>
+</div>
+</article>
+</main>
+<footer>
+<hr><a class=soc href=https://github.com/timonwong title=GitHub><i data-feather=github></i></a>|⚡️
+2021 © timonwong | <a href=https://github.com/athul/archie>Archie Theme</a> | Built with <a href=https://gohugo.io>Hugo</a>
+</footer>
+<script>feather.replace()</script></div>
+</body>
+</html>

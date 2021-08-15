@@ -1,0 +1,83 @@
+<!doctype html><html>
+<head>
+<meta name=generator content="Hugo 0.87.0">
+<meta charset=utf-8>
+<meta http-equiv=x-ua-compatible content="IE=edge"><title>Timon Wong | Home </title><meta name=viewport content="width=device-width,initial-scale=1">
+<meta name=description content>
+<meta property="og:image" content>
+<link rel=alternate type=application/rss+xml href=https://theo.im/index.xml title="Timon Wong">
+<meta property="og:title" content>
+<meta property="og:description" content>
+<meta property="og:type" content="website">
+<meta property="og:url" content="https://theo.im/">
+<meta name=twitter:card content="summary">
+<meta name=twitter:title content>
+<meta name=twitter:description content>
+<script src=https://theo.im/js/feather.min.js></script>
+<link href=https://theo.im/css/fonts.b685ac6f654695232de7b82a9143a46f9e049c8e3af3a21d9737b01f4be211d1.css rel=stylesheet>
+<link rel=stylesheet type=text/css media=screen href=https://theo.im/css/main.2f9b5946627215dc1ae7fa5f82bfc9cfcab000329136befeea5733f21e77d68f.css>
+</head>
+<body>
+<div class=content>
+<header>
+<div class=main>
+<a href=https://theo.im/>Timon Wong</a>
+</div>
+<nav>
+<a href=/>Home</a>
+<a href=/posts>Posts</a>
+<a href=/tags>Tags</a>
+</nav>
+</header>
+<main class=list>
+<div class=site-description></div>
+<section class=list-item>
+<h1 class=title><a href=/blog/2014/05/13/rabbitmq-note-1-setup-experimental-rabbitmq-environment-using-vagrant/>RabbitMQ笔记（一）: 通过Vagrant建立一个RabbitMQ服务器实验环境</a></h1>
+<time>May 13, 2014</time>
+<br><div class=description>
+安装Vagrant 在官方网站上，下载并安装Vagrant
+NOTE: Vagrant 1.6版本对CentOS的guest支持不好，不能正确设置网络连接，需要升级到最新版或打上下面这个补丁: Fix issue reported at mitchellh#3649
+下载并导入CentOS 6.3 Box vagrant box add --name centos63 'https://s3.amazonaws.com/itmat-public/centos-6.3-chef-10.14.2.box' 创建Vagrantfile Vagrantfile 文件内容如下:
+# -*- mode: ruby -*- # vi: set ft=ruby : # Vagrantfile API/syntax version. Don't touch unless you know what you're doing! VAGRANTFILE_API_VERSION = "2" Vagrant.configure(VAGRANTFILE_API_VERSION) do |config| config.vm.box = "centos63" # 一个Host-Only的Network, IP地址可以自定义, 方便访问 config.vm.network :private_network, ip: "10.10.0.70", netmask: "255.255.255.0" # config.vm.synced_folder "../", "/vagrant" config.vm.provider :virtualbox do |vb| # 调节虚拟机CPU个数 vb.&mldr;
+</div>
+<a href=/blog/2014/05/13/rabbitmq-note-1-setup-experimental-rabbitmq-environment-using-vagrant/>Read more ⟶</a>
+</section>
+<section class=list-item>
+<h1 class=title><a href=/blog/2014/05/13/rabbitmq-note-2-about-simultaneous-connections/>RabbitMQ笔记（二）: 并发连接数</a></h1>
+<time>May 13, 2014</time>
+<br><div class=description>
+概要 对于服务器来说，并发连接数一直是一个需要考量的问题，因此在这里做一个简单的测试。
+测试 在测试前，需要准备一个客户端环境，本文的环境是:
+CentOS 6.3 Python 2.7.6 Kombu NOTE: 下文中的 IP 地址 10.10.0.70 为 RabbitMQ 服务器的 IP 地址
+测试: 耗尽 rabbitmq 的 socket descriptors 首先, 编写一个脚本:
+#!/usr/bin/env python # -*- coding: utf-8 -*- import os import logging import config logging.basicConfig(format='%(asctime)s- %(name)s- %(levelname)s- %(message)s', level=logging.INFO) LOG = logging.getLogger(os.path.basename(__file__)) def main(): connections = [] while True: LOG.info("Try to establish a new rabbit connection...") connection = config.get_connection() connection.&mldr;
+</div>
+<a href=/blog/2014/05/13/rabbitmq-note-2-about-simultaneous-connections/>Read more ⟶</a>
+</section>
+<section class=list-item>
+<h1 class=title><a href=/blog/2012/10/27/directory-comparison-for-git-difftool/>Directory comparison for git difftool, with Beyond Compare 3</a></h1>
+<time>Oct 27, 2012</time>
+<br><div class=description>
+For a long time, I didn&rsquo;t know a way to do directory comparison using git difftool command, extdiff extension from Mercurial did perform much more superior than Git.
+Though it may be a bit out of date, I just found that after v1.7.11, Git now supports directory comparison through --dir-diff option, fantastic!
+UPDATE 12/11/2012: You will need v1.8.0 version of msysgit installed, as noted by Scooter Software (Reference).
+So here is a list of steps for me to make Beyond Compare 3 and Git directory comparison work under Windows.&mldr;
+</div>
+<a href=/blog/2012/10/27/directory-comparison-for-git-difftool/>Read more ⟶</a>
+</section>
+<ul class=pagination>
+<span class="page-item page-prev">
+<a href=/ class=page-link aria-label=Previous><span aria-hidden=true>← Prev</span></a>
+</span>
+<span class="page-item page-next">
+</span>
+</ul>
+</main>
+<footer>
+<hr><a class=soc href=https://github.com/timonwong title=GitHub><i data-feather=github></i></a>|⚡️
+2021 © timonwong | <a href=https://github.com/athul/archie>Archie Theme</a> | Built with <a href=https://gohugo.io>Hugo</a>
+</footer>
+<script>feather.replace()</script>
+</div>
+</body>
+</html>

@@ -1,0 +1,91 @@
+<!doctype html><html><head>
+<meta charset=utf-8>
+<meta http-equiv=x-ua-compatible content="IE=edge"><title>解决 AWS ELB 偶发的 502 Bad Gateway 错误 - Timon Wong</title><meta name=viewport content="width=device-width,initial-scale=1">
+<meta name=description content="问题描述 在使用了 Prometheus blackbox_exporter 做了 HTTP 协议的监控之后，blackbox_exporter 偶尔会报一些 ProbeDown 的报警，经过检查是 502 Bad Gateway 错误，但此时后端是正常的，只是在 AWS ELB 的监控指标中，看到了 ELB HTTP 5xx 相关错误，因此困扰了一段时间。
+HTTP 数据流向如下：
+[Client] --- [ELB] --- [nginx] --- [App Servers] 排查问题 最开始是怀疑是后端问题，但是查阅了 nginx 和 App servers 的日志，没有任何结果，只是在 ELB 日志里面找到了 502 Bad Gateway 的错误信息。无奈之下甚至怀疑 nginx 所在 EC2 instance 有问题，因此求助了 AWS 技术支持。根据建议，在 nginx 这端做了 tcpdump 抓包，最后终于在 AWS 技术支持的帮助下，定位并解决了问题 🎉。
+先补充一个知识：如果后端支持的话，ELB 会使用保持连接（HTTP persistent/keep-alive connections）。来看看这一个保持连接的 TCP stream：
+其中，10.100.2.186 是 ELB 内部 IP，10.100.250.22 是 nginx 服务器内部 IP。这样，可以看到：">
+<meta property="og:image" content>
+<meta property="og:title" content="解决 AWS ELB 偶发的 502 Bad Gateway 错误">
+<meta property="og:description" content="问题描述 在使用了 Prometheus blackbox_exporter 做了 HTTP 协议的监控之后，blackbox_exporter 偶尔会报一些 ProbeDown 的报警，经过检查是 502 Bad Gateway 错误，但此时后端是正常的，只是在 AWS ELB 的监控指标中，看到了 ELB HTTP 5xx 相关错误，因此困扰了一段时间。
+HTTP 数据流向如下：
+[Client] --- [ELB] --- [nginx] --- [App Servers] 排查问题 最开始是怀疑是后端问题，但是查阅了 nginx 和 App servers 的日志，没有任何结果，只是在 ELB 日志里面找到了 502 Bad Gateway 的错误信息。无奈之下甚至怀疑 nginx 所在 EC2 instance 有问题，因此求助了 AWS 技术支持。根据建议，在 nginx 这端做了 tcpdump 抓包，最后终于在 AWS 技术支持的帮助下，定位并解决了问题 🎉。
+先补充一个知识：如果后端支持的话，ELB 会使用保持连接（HTTP persistent/keep-alive connections）。来看看这一个保持连接的 TCP stream：
+其中，10.100.2.186 是 ELB 内部 IP，10.100.250.22 是 nginx 服务器内部 IP。这样，可以看到：">
+<meta property="og:type" content="article">
+<meta property="og:url" content="https://theo.im/blog/2017/10/14/suspicious-502-error-from-elb/"><meta property="article:section" content="posts">
+<meta property="article:published_time" content="2017-10-14T23:32:11+00:00">
+<meta property="article:modified_time" content="2017-10-14T23:32:11+00:00">
+<meta name=twitter:card content="summary">
+<meta name=twitter:title content="解决 AWS ELB 偶发的 502 Bad Gateway 错误">
+<meta name=twitter:description content="问题描述 在使用了 Prometheus blackbox_exporter 做了 HTTP 协议的监控之后，blackbox_exporter 偶尔会报一些 ProbeDown 的报警，经过检查是 502 Bad Gateway 错误，但此时后端是正常的，只是在 AWS ELB 的监控指标中，看到了 ELB HTTP 5xx 相关错误，因此困扰了一段时间。
+HTTP 数据流向如下：
+[Client] --- [ELB] --- [nginx] --- [App Servers] 排查问题 最开始是怀疑是后端问题，但是查阅了 nginx 和 App servers 的日志，没有任何结果，只是在 ELB 日志里面找到了 502 Bad Gateway 的错误信息。无奈之下甚至怀疑 nginx 所在 EC2 instance 有问题，因此求助了 AWS 技术支持。根据建议，在 nginx 这端做了 tcpdump 抓包，最后终于在 AWS 技术支持的帮助下，定位并解决了问题 🎉。
+先补充一个知识：如果后端支持的话，ELB 会使用保持连接（HTTP persistent/keep-alive connections）。来看看这一个保持连接的 TCP stream：
+其中，10.100.2.186 是 ELB 内部 IP，10.100.250.22 是 nginx 服务器内部 IP。这样，可以看到：">
+<script src=https://theo.im/js/feather.min.js></script>
+<link href=https://theo.im/css/fonts.b685ac6f654695232de7b82a9143a46f9e049c8e3af3a21d9737b01f4be211d1.css rel=stylesheet>
+<link rel=stylesheet type=text/css media=screen href=https://theo.im/css/main.2f9b5946627215dc1ae7fa5f82bfc9cfcab000329136befeea5733f21e77d68f.css>
+</head>
+<body>
+<div class=content><header>
+<div class=main>
+<a href=https://theo.im/>Timon Wong</a>
+</div>
+<nav>
+<a href=/>Home</a>
+<a href=/posts>Posts</a>
+<a href=/tags>Tags</a>
+</nav>
+</header>
+<main>
+<article>
+<div class=title>
+<h1 class=title>解决 AWS ELB 偶发的 502 Bad Gateway 错误</h1>
+<div class=meta>Posted on Oct 14, 2017</div>
+</div>
+<section class=body>
+<h2 id=问题描述>问题描述</h2>
+<p>在使用了 <a href=https://prometheus.io>Prometheus</a> <a href=https://github.com/prometheus/blackbox_exporter>blackbox_exporter</a> 做了 HTTP 协议的监控之后，<a href=https://github.com/prometheus/blackbox_exporter>blackbox_exporter</a> 偶尔会报一些 ProbeDown 的报警，经过检查是 502 Bad Gateway 错误，但此时后端是正常的，只是在 AWS ELB 的监控指标中，看到了 ELB HTTP 5xx 相关错误，因此困扰了一段时间。</p>
+<p>HTTP 数据流向如下：</p>
+<div class=highlight><pre tabindex=0 style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-fallback data-lang=fallback>[Client] --- [ELB] --- [nginx] --- [App Servers]
+</code></pre></div><h2 id=排查问题>排查问题</h2>
+<p>最开始是怀疑是后端问题，但是查阅了 nginx 和 App servers 的日志，没有任何结果，只是在 ELB 日志里面找到了 502 Bad Gateway 的错误信息。无奈之下甚至怀疑 nginx 所在 EC2 instance 有问题，因此求助了 AWS 技术支持。根据建议，在 nginx 这端做了 tcpdump 抓包，最后终于在 AWS 技术支持的帮助下，定位并解决了问题 🎉。</p>
+<p>先补充一个知识：如果后端支持的话，ELB 会使用保持连接（HTTP persistent/keep-alive connections）。来看看这一个保持连接的 TCP stream：</p>
+<p><img src=https://theo-im-1255089908.cos.ap-chengdu.myqcloud.com/images/2017-10-14-tcpdump.png alt></p>
+<p>其中，<code>10.100.2.186</code> 是 ELB 内部 IP，<code>10.100.250.22</code> 是 nginx 服务器内部 IP。这样，可以看到：</p>
+<ul>
+<li>在 76.69 秒时候，连接被创建；</li>
+<li>在 181.69 秒的时候，是最后一次有效请求；</li>
+<li>在 256.69 秒的时候（No.7475），该连接被 nginx 关闭；</li>
+<li>在 256.69 秒的时候，几乎在同时还有一个 HTTP GET 请求（No.7476）；</li>
+<li>由于 nginx 已经关闭连接了，上面的这个请求当然会收到 TCP RST，ELB 无法访问后端服务器，就会返回 502 Bad Gateway 了。</li>
+</ul>
+<p>刚刚过了 75 秒（256.69 - 181.69）连接就被 nginx 关闭了，是不是很眼熟：nginx <a href=http://nginx.org/en/docs/http/ngx_http_core_module.html#keepalive_timeout>keepalive_timeout</a> 参数的默认值，恰好就是 75 秒。</p>
+<p>很明显是遇到了 Keep-Alive timeout race 了，而这个问题其实在 HTTP/1.1 下，是不好解决的，只有靠微调降低出现的概率；禁用 Keep-Alive；或者靠 Client 上层处理。</p>
+<h2 id=解决问题>解决问题</h2>
+<p>由于 ELB 并不受我们的控制，所以考虑对后端进行微调。根据不同的场景，可以：</p>
+<ul>
+<li>增加后端服务器持久连接的保持时间，比如 nginx 增加 <code>keepalive_timeout</code> 参数</li>
+<li>减少 ELB 的 idle timeout</li>
+<li>禁用 HTTP 持久连接（不推荐）</li>
+</ul>
+<p>根据<a href=https://blog.percy.io/tuning-nginx-behind-google-cloud-platform-http-s-load-balancer-305982ddb340>这篇解决 Google Cloud Platform 负载均衡器类似问题的文章</a>，说明我不是一个人😂。</p>
+</section>
+<div class=post-tags>
+<nav class="nav tags">
+<ul class=tags>
+<li><a href=/tags/aws>AWS</a></li>
+</ul>
+</nav>
+</div>
+</article>
+</main>
+<footer>
+<hr><a class=soc href=https://github.com/timonwong title=GitHub><i data-feather=github></i></a>|⚡️
+2021 © timonwong | <a href=https://github.com/athul/archie>Archie Theme</a> | Built with <a href=https://gohugo.io>Hugo</a>
+</footer>
+<script>feather.replace()</script></div>
+</body>
+</html>
