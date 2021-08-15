@@ -1,7 +1,7 @@
 ---
 title: 'RabbitMQ笔记（二）: 并发连接数'
 date: 2014-05-13 16:16:21
-tags: RabbitMQ
+tags: [RabbitMQ]
 ---
 
 ## 概要

@@ -1,7 +1,7 @@
 ---
 title: 在 Go 中获取 stacktrace
 date: 2014-07-21 21:30:12
-tags: Go
+tags: [Go]
 ---
 
 

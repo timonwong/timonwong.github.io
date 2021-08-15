@@ -1,0 +1,7 @@
+main:
+  - name: Posts
+    url: /posts/
+    weight: 2
+  - name: Tags
+    url: /tags/
+    weight: 3
