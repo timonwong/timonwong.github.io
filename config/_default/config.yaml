@@ -10,7 +10,7 @@ paginate: 6
 copyright: >
   &copy; 2021 timonwong
 enableEmoji: true
-enableGitInfo: false
+enableGitInfo: true
 summaryLength: 75
 
 defaultContentLanguage: en
