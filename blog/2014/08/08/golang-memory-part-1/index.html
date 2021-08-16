@@ -4,8 +4,8 @@
 <meta name=generator content="Hugo Eureka 0.8.2">
 <link rel=stylesheet href=https://theo.im/css/eureka.min.css>
 <script defer src=https://theo.im/js/eureka.min.js></script>
-<link rel=preconnect href=https://fonts.gstatic.com crossorigin>
-<link rel=preload href="https://fonts.googleapis.com/css2?family=Lora:wght@400;600;700&family=Noto+Serif+SC:wght@400;600;700&display=swap" as=style onload="this.onload=null,this.rel='stylesheet'">
+<link rel=preconnect href=https://gstatic.loli.net crossorigin>
+<link rel=preload href="https://fonts.loli.net/css2?family=Lora:wght@400;600;700&family=Noto+Serif+SC:wght@400;600;700&display=swap" as=style onload="this.onload=null,this.rel='stylesheet'">
 <link rel=stylesheet href=https://cdn.jsdelivr.net/gh/highlightjs/cdn-release@10.1.0/build/styles/solarized-light.min.css media=print onload="this.media='all',this.onload=null" crossorigin>
 <script defer src=https://cdn.jsdelivr.net/gh/highlightjs/cdn-release@10.1.0/build/highlight.min.js crossorigin></script>
 <script defer src=https://cdn.jsdelivr.net/gh/highlightjs/cdn-release@10.1.0/build/languages/dart.min.js crossorigin></script>
@@ -22,7 +22,7 @@
 <link rel=apple-touch-icon sizes=180x180 href=https://theo.im/images/icon_hu64421c6c7700f606f0ad45d807017b09_5843_180x180_fill_box_center_3.png>
 <meta name=description content="开始之前 首先，这是一篇菜B写的文章，可能会有理解错误的地方，发现错误请斧正，谢谢。 为了治疗我的懒癌早期，我一次就不写得太多了，这个系列想写很久了，每次">
 <script type=application/ld+json>{"@context":"https://schema.org","@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","position":1,"name":"Posts","item":"https://theo.im/posts/"},{"@type":"ListItem","position":2,"name":"Golang 内存模型（一）","item":"https://theo.im/blog/2014/08/08/golang-memory-part-1/"}]}</script>
-<script type=application/ld+json>{"@context":"https://schema.org","@type":"Article","mainEntityOfPage":{"@type":"WebPage","@id":"https://theo.im/blog/2014/08/08/golang-memory-part-1/"},"headline":"Golang 内存模型（一） | timonwong","datePublished":"2014-08-08T08:39:44+00:00","dateModified":"2014-08-08T08:39:44+00:00","wordCount":1256,"publisher":{"@type":"Person","name":"timonwong","logo":{"@type":"ImageObject","url":"https://theo.im/images/icon.png"}},"description":"开始之前 首先，这是一篇菜B写的文章，可能会有理解错误的地方，发现错误请斧正，谢谢。 为了治疗我的懒癌早期，我一次就不写得太多了，这个系列想写很久了，每次"}</script><meta property="og:title" content="Golang 内存模型（一） | timonwong">
+<script type=application/ld+json>{"@context":"https://schema.org","@type":"Article","mainEntityOfPage":{"@type":"WebPage","@id":"https://theo.im/blog/2014/08/08/golang-memory-part-1/"},"headline":"Golang 内存模型（一） | timonwong","datePublished":"2014-08-08T08:39:44+00:00","dateModified":"2014-08-08T08:39:44+00:00","wordCount":1257,"publisher":{"@type":"Person","name":"timonwong","logo":{"@type":"ImageObject","url":"https://theo.im/images/icon.png"}},"description":"开始之前 首先，这是一篇菜B写的文章，可能会有理解错误的地方，发现错误请斧正，谢谢。 为了治疗我的懒癌早期，我一次就不写得太多了，这个系列想写很久了，每次"}</script><meta property="og:title" content="Golang 内存模型（一） | timonwong">
 <meta property="og:type" content="article">
 <meta property="og:image" content="https://theo.im/images/icon.png">
 <meta property="og:url" content="https://theo.im/blog/2014/08/08/golang-memory-part-1/">
@@ -199,7 +199,10 @@ func main() {
 };
 </code></pre>
 <p>他们的依赖关系如下图所示：</p>
-<p><img src=/images/graph/20140808-interface-deps.png alt></p>
+<figure>
+<img src=https://g.gravizo.com/svg?%0adigraph%20G%20%7b%0a%09rankdir%3dBT%3b%0a%09node%20%5bfontname%3dArial%2cshape%3dellipse%5d%3b%0a%09Itab%20-%3e%20InterfaceType%3b%0a%09Iface%20-%3e%20Itab%3b%0a%09Itab%20-%3e%20Itab%3b%0a%09Eface%3b%0a%7d%0a alt=Diagram>
+<figcaption>Diagram</figcaption>
+</figure>
 <p>先到这里，下一篇将会举例子说明给一个 <code>interface{}</code> 类型的变量赋值后，其具体的内存结构是怎么样的。</p>
 <p>打了几个小时，真费时间，争取这个系列不坑 (逃</p>
 </div>
