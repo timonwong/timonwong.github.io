@@ -22,7 +22,7 @@
 <link rel=apple-touch-icon sizes=180x180 href=https://theo.im/images/icon_hu64421c6c7700f606f0ad45d807017b09_5843_180x180_fill_box_center_3.png>
 <meta name=description content="buf := make([]byte, 1<<16) // 获取 **所有** goroutine 的 stacktrace runtime.Stack(buf, true) // 如果需要获取 **当前** goroutine 的 stacktrace, 第二个参数需要为 `false` runtime.Stack(buf, true) fmt.Println(string(buf)) 太诡异了，居然要指定 buffer 的大小，用起来不方便。虽然可以给个“">
 <script type=application/ld+json>{"@context":"https://schema.org","@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","position":1,"name":"Posts","item":"https://theo.im/posts/"},{"@type":"ListItem","position":2,"name":"在 Go 中获取 stacktrace","item":"https://theo.im/blog/2014/07/21/Printing-stacktrace-in-Go/"}]}</script>
-<script type=application/ld+json>{"@context":"https://schema.org","@type":"Article","mainEntityOfPage":{"@type":"WebPage","@id":"https://theo.im/blog/2014/07/21/Printing-stacktrace-in-Go/"},"headline":"在 Go 中获取 stacktrace | timonwong","datePublished":"2014-07-21T21:30:12+00:00","dateModified":"2014-07-21T21:30:12+00:00","wordCount":706,"publisher":{"@type":"Person","name":"timonwong","logo":{"@type":"ImageObject","url":"https://theo.im/images/icon.png"}},"description":"buf := make([]byte, 1\u0026lt;\u0026lt;16) \/\/ 获取 **所有** goroutine 的 stacktrace runtime.Stack(buf, true) \/\/ 如果需要获取 **当前** goroutine 的 stacktrace, 第二个参数需要为 `false` runtime.Stack(buf, true) fmt.Println(string(buf)) 太诡异了，居然要指定 buffer 的大小，用起来不方便。虽然可以给个“"}</script><meta property="og:title" content="在 Go 中获取 stacktrace | timonwong">
+<script type=application/ld+json>{"@context":"https://schema.org","@type":"Article","mainEntityOfPage":{"@type":"WebPage","@id":"https://theo.im/blog/2014/07/21/Printing-stacktrace-in-Go/"},"headline":"在 Go 中获取 stacktrace | timonwong","datePublished":"2014-07-21T21:30:12+00:00","dateModified":"2021-08-15T15:22:09+08:00","wordCount":706,"publisher":{"@type":"Person","name":"timonwong","logo":{"@type":"ImageObject","url":"https://theo.im/images/icon.png"}},"description":"buf := make([]byte, 1\u0026lt;\u0026lt;16) \/\/ 获取 **所有** goroutine 的 stacktrace runtime.Stack(buf, true) \/\/ 如果需要获取 **当前** goroutine 的 stacktrace, 第二个参数需要为 `false` runtime.Stack(buf, true) fmt.Println(string(buf)) 太诡异了，居然要指定 buffer 的大小，用起来不方便。虽然可以给个“"}</script><meta property="og:title" content="在 Go 中获取 stacktrace | timonwong">
 <meta property="og:type" content="article">
 <meta property="og:image" content="https://theo.im/images/icon.png">
 <meta property="og:url" content="https://theo.im/blog/2014/07/21/Printing-stacktrace-in-Go/">
@@ -30,7 +30,7 @@
 <meta property="og:locale" content="en">
 <meta property="og:site_name" content="timonwong">
 <meta property="article:published_time" content="2014-07-21T21:30:12+00:00">
-<meta property="article:modified_time" content="2014-07-21T21:30:12+00:00">
+<meta property="article:modified_time" content="2021-08-15T15:22:09+08:00">
 <meta property="article:section" content="posts">
 <meta property="article:tag" content="Go">
 <body class="flex flex-col min-h-screen">
